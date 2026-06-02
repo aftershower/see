@@ -258,6 +258,27 @@ function safetyResources(locale = "zh-CN") {
       verify: "再用你自己找来的官方渠道核实，比如卡背面的银行电话或 .gov 官方网站。"
     };
   }
+  if (normalized.startsWith("en-gb")) {
+    return {
+      emergency: "999 或 112",
+      crisis: "Samaritans 116 123，或紧急时拨打 999/112",
+      verify: "再用你自己找来的官方渠道核实，比如 gov.uk 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
+  if (normalized.startsWith("en-ca")) {
+    return {
+      emergency: "911",
+      crisis: "988 或 911",
+      verify: "再用你自己找来的官方渠道核实，比如 canada.ca 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
+  if (normalized.startsWith("en-au")) {
+    return {
+      emergency: "000",
+      crisis: "Lifeline 13 11 14，或紧急时拨打 000",
+      verify: "再用你自己找来的官方渠道核实，比如 .gov.au 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
   if (normalized.startsWith("zh-cn")) {
     return {
       emergency: "当地急救电话，比如 120",

@@ -134,11 +134,21 @@ test("uses locale-aware urgent and crisis resources", () => {
   const usUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-US" });
   const usCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-US" });
   const cnUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "zh-CN" });
+  const ukUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-GB" });
+  const ukCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-GB" });
+  const caCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-CA" });
+  const auUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-AU" });
+  const auCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-AU" });
 
   assert.match(usUrgent.text, /911/);
   assert.doesNotMatch(usUrgent.text, /120/);
   assert.match(usCrisis.text, /988/);
   assert.match(cnUrgent.text, /120/);
+  assert.match(ukUrgent.text, /999|112/);
+  assert.match(ukCrisis.text, /116 123/);
+  assert.match(caCrisis.text, /988/);
+  assert.match(auUrgent.text, /000/);
+  assert.match(auCrisis.text, /13 11 14/);
 });
 
 test("does not persist memories from urgent, crisis, or scam disclosures", () => {

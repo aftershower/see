@@ -11,6 +11,10 @@
 - AARP's long-term-care AI guidance warns that AI tools for older adults need guardrails for errors, bias, privacy vulnerabilities, and overreliance. Source: https://www.aarp.org/pri/topics/ltss/artificial-intelligence-long-term-care/
 - Apple CloudKit private databases are user-owned iCloud storage: only the user can access private database content by default, it requires an iCloud account for writes, and it counts toward the user's iCloud quota. Source: https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase
 - Apple's Speech framework supports recognizing spoken words from recorded or live audio, which keeps a future native iOS path open for tap-to-start voice capture without committing the PWA to continuous listening. Source: https://developer.apple.com/documentation/speech/
+- UK official guidance lists 999 and 112 as national emergency numbers. Source: https://www.gov.uk/guidance/999-and-112-the-uks-national-emergency-numbers
+- Samaritans lists 116 123 as its UK/Ireland freephone support number. Source: https://www.samaritans.org/how-we-can-help/contact-samaritan/
+- Canada 9-8-8 is the national suicide crisis helpline. Source: https://988.ca/
+- Australian government emergency guidance points to Triple Zero 000 for life-threatening emergencies, and Lifeline publishes 13 11 14 for crisis support. Sources: https://www.studyaustralia.gov.au/en/life-in-australia/safety-in-australia/emergencies.html and https://www.lifeline.org.au/get-help/national-services/lifeline-crisis-support
 
 ## Product Direction
 
@@ -40,12 +44,13 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 - Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
 - `verify` responses now include locale-aware official-channel examples, such as card-back bank phone numbers and `.gov` sites for US users, or official phone/branch/community channels for China users.
+- Locale safety profiles now include UK, Canada, and Australia emergency/crisis resources in addition to US, China, and a generic fallback.
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 
 ## Next Optimization Backlog
 
 1. Deepen safety and localization:
-   - expand locale profiles beyond current US/China/default handling
+   - expand locale profiles beyond current US/UK/Canada/Australia/China/default handling
    - keep collecting false positive/false negative examples from pilot sessions
    - tune `verify` examples after pilot sessions show which institutions older adults actually ask about
 
