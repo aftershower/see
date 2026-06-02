@@ -34,13 +34,14 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - The local server now enforces POST+JSON for `/api/chat`, returns method/media-type errors, adds browser-hardening headers, and marks API responses `no-store`.
 - Users can now export local companion data as JSON, import a previous JSON export, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
 - Urgent and crisis replies now use locale-aware emergency resources, with the browser passing `navigator.language` through `/api/chat` and the local fallback.
+- Safety routing now also catches fake-agency app downloads, screen-sharing pressure, secrecy demands, suspicious links, identity-document coercion, and "not allowed to leave" abuse signals.
 
 ## Next Optimization Backlog
 
 1. Deepen safety and localization:
-   - more abuse/coercion and fake-agency-link patterns
    - clearer "ask a trusted person" guidance for non-emergency uncertainty
    - expand locale profiles beyond current US/China/default handling
+   - review false positives from broad scam terms such as suspicious links and identity documents
 
 2. Improve product validation:
    - define elder-reader usability metrics
