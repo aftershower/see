@@ -28,7 +28,7 @@ test("merges memories by stable type and label while preserving stronger detail"
   assert.match(xiaoling[0].detail, /小玲/);
 });
 
-test("classifies urgent medical, crisis, scam, support, and normal messages", () => {
+test("classifies urgent medical, crisis, scam, verify, support, and normal messages", () => {
   assert.deepEqual(classifySafety("我胸口很痛，喘不上气").level, "urgent");
   assert.deepEqual(classifySafety("我不想活了，觉得没人需要我").level, "crisis");
   assert.deepEqual(classifySafety("陌生人让我买礼品卡，还要银行卡验证码").level, "scam");
@@ -37,6 +37,7 @@ test("classifies urgent medical, crisis, scam, support, and normal messages", ()
   assert.deepEqual(classifySafety("有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人").level, "scam");
   assert.deepEqual(classifySafety("我不确定这个链接是不是骗子发来的").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把身份证照片发给他").level, "scam");
+  assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("护工打我，还不让我告诉女儿").level, "urgent");
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
@@ -111,6 +112,14 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(scam.text, /PIN|收据|ReportFraud/);
   assert.equal(fakeAgency.safety.level, "scam");
   assert.match(fakeAgency.text, /别急|慢下来|信得过的人/);
+});
+
+test("routes uncertainty to trusted-person verification guidance", () => {
+  const reply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [] });
+
+  assert.equal(reply.safety.level, "verify");
+  assert.match(reply.text, /先别急|慢下来|信得过的人|官方/);
+  assert.deepEqual(reply.memories, []);
 });
 
 test("uses locale-aware urgent and crisis resources", () => {

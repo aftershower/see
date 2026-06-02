@@ -31,6 +31,7 @@ test("styles use large readable text and responsive layout", async () => {
   assert.match(css, /\.app-shell/);
   assert.match(css, /\.privacy-actions/);
   assert.match(css, /\.storage-warning/);
+  assert.match(css, /\.message--verify/);
   assert.match(css, /@media \(max-width:\s*860px\)/);
   assert.match(css, /:focus-visible/);
 });

@@ -4,6 +4,7 @@ const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|不让我�
 const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回家|不认识路|wandering|lost/i;
 const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|结束生命|suicide|kill myself|self harm/i;
 const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|不要告诉任何人|保密|自称(?:警察|公安|客服|社保局)|下载.*(?:app|软件)|屏幕共享|共享屏幕|骗子|(?:不确定|陌生人|骗子|自称|让我|要求).{0,12}链接|链接.{0,12}(?:骗子|陌生人|转账|验证码|下载|安全)|(?:陌生人|骗子|自称|让我|要求).{0,12}身份证|身份证.{0,12}(?:照片|号码|发给|转账|验证码)|gift card|wire transfer|verification code|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
+const VERIFY_PATTERN = /不确定.{0,12}(?:电话|短信|消息|人|事情)|(?:电话|短信|消息|人).{0,12}可不可信|该不该相信|能不能相信|靠不靠谱|是不是靠谱/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
@@ -20,6 +21,9 @@ export function classifySafety(text = "") {
   }
   if (SCAM_PATTERN.test(text)) {
     return { level: "scam", reason: "fraud_risk" };
+  }
+  if (VERIFY_PATTERN.test(text)) {
+    return { level: "verify", reason: "uncertain_risk" };
   }
   if (SUPPORT_PATTERN.test(text)) {
     return { level: "support", reason: "emotional_support" };
@@ -189,6 +193,14 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
   if (safety.level === "scam") {
     return {
       text: "这可能是诈骗。先慢下来，别转钱、别给验证码、礼品卡号码或 PIN。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
+      safety,
+      memories: []
+    };
+  }
+
+  if (safety.level === "verify") {
+    return {
+      text: "先别急着做决定，慢下来是对的。别先转钱、别发验证码或证件。可以找一个信得过的人一起看看，或用你自己找来的官方电话核实。",
       safety,
       memories: []
     };

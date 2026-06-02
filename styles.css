@@ -137,7 +137,8 @@ h2 {
 
 .message--urgent,
 .message--crisis,
-.message--scam {
+.message--scam,
+.message--verify {
   background: #fff2ef;
   border-color: rgba(180, 70, 48, 0.32);
 }

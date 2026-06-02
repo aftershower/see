@@ -38,13 +38,14 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - A validation protocol now defines pilot tasks and metrics for elder-reader usability, loneliness/support outcomes, privacy trust, caregiver consent boundaries, and safety false positive/false negative review.
 - Local import restore now normalizes imported records and warns before an older export overwrites newer local conversations.
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
+- Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
 
 ## Next Optimization Backlog
 
 1. Deepen safety and localization:
-   - clearer "ask a trusted person" guidance for non-emergency uncertainty
    - expand locale profiles beyond current US/China/default handling
    - keep collecting false positive/false negative examples from pilot sessions
+   - decide whether `verify` should have locale-specific official-channel examples
 
 2. Improve product validation:
    - run the validation protocol with 5 to 8 older adults
