@@ -39,6 +39,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Local import restore now normalizes imported records and merges older exports with newer local conversations instead of replacing newer data.
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 - Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
+- Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 
 ## Next Optimization Backlog
 
@@ -53,6 +54,6 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - keep caregiver/family summary sharing opt-in and older-adult controlled
 
 3. Strengthen local persistence:
-   - consider IndexedDB for larger histories
-   - define an iCloud/CloudKit migration path for a native iOS version
+   - implement IndexedDB only after pilot usage proves localStorage is too small or too blocking
+   - prototype native CloudKit only after cross-device continuity is a validated requirement
    - define cross-device conflict behavior for future CloudKit sync
