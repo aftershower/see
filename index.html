@@ -40,8 +40,10 @@
         <p class="privacy-copy">记忆保存在这台设备的浏览器里。你可以导出、清理旧聊天、删除单条记忆，也可以一键清空。</p>
         <div class="privacy-actions" aria-label="隐私操作">
           <button id="exportButton" type="button">导出记录</button>
+          <button id="importButton" type="button">导入记录</button>
           <button id="trimHistoryButton" type="button">清理旧聊天</button>
         </div>
+        <input id="importInput" class="sr-only" type="file" accept="application/json,.json" aria-label="选择 See 记录 JSON">
         <p id="storageWarning" class="storage-warning" role="status" aria-live="polite" hidden></p>
       </section>
 

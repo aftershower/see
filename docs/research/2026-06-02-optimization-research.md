@@ -9,10 +9,14 @@
 - WCAG 2.2 adds guidance relevant to older users, including target size, visible focus, and support for low-vision, cognitive, and mobile accessibility. Source: https://www.w3.org/TR/WCAG22/
 - FTC guidance says gift card, PIN, urgent-payment, government-impersonation, tech-support, and "do not tell anyone" payment requests should be treated as scams, and reports can be filed at ReportFraud.ftc.gov. Source: https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams
 - AARP's long-term-care AI guidance warns that AI tools for older adults need guardrails for errors, bias, privacy vulnerabilities, and overreliance. Source: https://www.aarp.org/pri/topics/ltss/artificial-intelligence-long-term-care/
+- Apple CloudKit private databases are user-owned iCloud storage: only the user can access private database content by default, it requires an iCloud account for writes, and it counts toward the user's iCloud quota. Source: https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase
+- Apple's Speech framework supports recognizing spoken words from recorded or live audio, which keeps a future native iOS path open for tap-to-start voice capture without committing the PWA to continuous listening. Source: https://developer.apple.com/documentation/speech/
 
 ## Product Direction
 
 The strongest lane is not a roleplay companion or AI replacement friend. It is a quiet, respectful, text-first companion that helps older adults feel seen and reconnect with real people.
+
+For a future native iOS version, the most coherent sync story is CloudKit private database storage rather than a custom account backend. That matches the product's privacy promise, but still requires explicit handling for missing iCloud accounts, user storage quota, migration, and restore.
 
 ## Optimizations Applied In This Batch
 
@@ -28,7 +32,7 @@ The strongest lane is not a roleplay companion or AI replacement friend. It is a
 - The browser app now sends chats through `/api/chat` with a timeout and local fallback, keeping the UI aligned with the future AI-provider boundary.
 - The message stream now uses `role="log"`, announces additions only, and avoids rebuilding the entire live region on every render.
 - The local server now enforces POST+JSON for `/api/chat`, returns method/media-type errors, adds browser-hardening headers, and marks API responses `no-store`.
-- Users can now export local companion data as JSON, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
+- Users can now export local companion data as JSON, import a previous JSON export, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
 
 ## Next Optimization Backlog
 
@@ -45,4 +49,4 @@ The strongest lane is not a roleplay companion or AI replacement friend. It is a
 3. Strengthen local persistence:
    - consider IndexedDB for larger histories
    - define an iCloud/CloudKit migration path for a native iOS version
-   - add import/restore after JSON export
+   - add conflict handling for restoring old exports over newer local data

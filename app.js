@@ -15,6 +15,8 @@ const form = document.querySelector("#chatForm");
 const input = document.querySelector("#messageInput");
 const resetButton = document.querySelector("#resetButton");
 const exportButton = document.querySelector("#exportButton");
+const importButton = document.querySelector("#importButton");
+const importInput = document.querySelector("#importInput");
 const trimHistoryButton = document.querySelector("#trimHistoryButton");
 const storageWarning = document.querySelector("#storageWarning");
 const renderedMessageIds = new Set();
@@ -223,6 +225,63 @@ function exportState() {
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
+function importState(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      const imported = JSON.parse(String(reader.result || "{}"));
+      applyImportedState(imported);
+      setStorageWarning("");
+    } catch {
+      setStorageWarning("导入失败。请确认这是之前导出的 See JSON 文件。");
+    } finally {
+      importInput.value = "";
+    }
+  });
+  reader.addEventListener("error", () => {
+    setStorageWarning("导入失败。请稍后再试。");
+    importInput.value = "";
+  });
+  reader.readAsText(file);
+}
+
+function applyImportedState(imported) {
+  if (!imported || !Array.isArray(imported.messages) || !Array.isArray(imported.memories)) {
+    throw new Error("Invalid See export");
+  }
+
+  const messages = imported.messages
+    .filter((item) => item && typeof item.text === "string" && ["assistant", "user"].includes(item.role))
+    .map((item) => ({
+      id: typeof item.id === "string" ? item.id : createId(item.role),
+      role: item.role,
+      text: item.text,
+      safetyLevel: item.safetyLevel || "normal",
+      createdAt: item.createdAt || new Date().toISOString()
+    }));
+  if (messages.length === 0) {
+    throw new Error("Imported export has no messages");
+  }
+
+  state.messages = messages;
+  state.memories = imported.memories
+    .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
+    .map((item) => ({
+      ...item,
+      id: typeof item.id === "string" ? item.id : createId("memory")
+    }));
+  state.checkIn = imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null;
+  renderedMessageIds.clear();
+  for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
+    node.remove();
+  }
+  saveState();
+  render();
+}
+
 function trimHistory() {
   if (state.messages.length <= MAX_RETAINED_MESSAGES) return;
   const confirmed = window.confirm("只保留最近 12 条聊天吗？长期记忆会继续保留。");
@@ -309,6 +368,8 @@ checkInButton.addEventListener("click", () => {
 });
 
 exportButton.addEventListener("click", exportState);
+importButton.addEventListener("click", () => importInput.click());
+importInput.addEventListener("change", importState);
 trimHistoryButton.addEventListener("click", trimHistory);
 
 resetButton.addEventListener("click", () => {

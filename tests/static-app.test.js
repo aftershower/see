@@ -15,6 +15,9 @@ test("app shell is a chat-first elder companion interface", async () => {
   assert.match(html, /id="checkInButton"/);
   assert.match(html, /privacyNotice/);
   assert.match(html, /id="exportButton"/);
+  assert.match(html, /id="importButton"/);
+  assert.match(html, /id="importInput"[^>]*type="file"/);
+  assert.match(html, /id="importInput"[^>]*accept="application\/json,.json"/);
   assert.match(html, /id="trimHistoryButton"/);
   assert.match(html, /id="storageWarning"[^>]*aria-live="polite"/);
   assert.match(html, /id="resetButton"[^>]*aria-label="清空聊天和记忆"/);
@@ -43,9 +46,14 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /checkInButton/);
   assert.match(app, /resetButton/);
   assert.match(app, /exportButton/);
+  assert.match(app, /importButton/);
+  assert.match(app, /importInput/);
   assert.match(app, /trimHistoryButton/);
   assert.match(app, /storageWarning/);
   assert.match(app, /exportState/);
+  assert.match(app, /importState/);
+  assert.match(app, /applyImportedState/);
+  assert.match(app, /new FileReader/);
   assert.match(app, /trimHistory/);
   assert.match(app, /URL\.createObjectURL/);
   assert.match(app, /new Blob/);
