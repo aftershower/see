@@ -50,7 +50,7 @@ async function serveStatic(pathname, response) {
   const fullPath = normalize(join(root, decoded));
   const relation = relative(root, fullPath);
 
-  if (relation.startsWith("..") || relation.includes("..")) {
+  if (relation.startsWith("..") || relation === "..") {
     return sendText(response, 403, "Forbidden", "text/plain; charset=utf-8");
   }
 
