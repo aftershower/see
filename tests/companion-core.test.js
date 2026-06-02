@@ -36,12 +36,15 @@ test("classifies urgent medical, crisis, scam, support, and normal messages", ()
   assert.deepEqual(classifySafety("电脑客服让我开远程控制，还说派快递来取现金，别告诉家人").level, "scam");
   assert.deepEqual(classifySafety("有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人").level, "scam");
   assert.deepEqual(classifySafety("我不确定这个链接是不是骗子发来的").level, "scam");
+  assert.deepEqual(classifySafety("陌生人让我把身份证照片发给他").level, "scam");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("护工打我，还不让我告诉女儿").level, "urgent");
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
   assert.deepEqual(classifySafety("我迷路了，不知道家在哪").level, "urgent");
   assert.deepEqual(classifySafety("今天有点孤独，没人说话").level, "support");
   assert.deepEqual(classifySafety("今天吃了面条").level, "normal");
+  assert.deepEqual(classifySafety("女儿发来相册链接，我点开看照片").level, "normal");
+  assert.deepEqual(classifySafety("我今天去派出所办身份证").level, "normal");
 });
 
 test("plans check-ins using day rhythm and memories", () => {

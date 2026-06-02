@@ -37,13 +37,14 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Safety routing now also catches fake-agency app downloads, screen-sharing pressure, secrecy demands, suspicious links, identity-document coercion, and "not allowed to leave" abuse signals.
 - A validation protocol now defines pilot tasks and metrics for elder-reader usability, loneliness/support outcomes, privacy trust, caregiver consent boundaries, and safety false positive/false negative review.
 - Local import restore now normalizes imported records and warns before an older export overwrites newer local conversations.
+- Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 
 ## Next Optimization Backlog
 
 1. Deepen safety and localization:
    - clearer "ask a trusted person" guidance for non-emergency uncertainty
    - expand locale profiles beyond current US/China/default handling
-   - review false positives from broad scam terms such as suspicious links and identity documents
+   - keep collecting false positive/false negative examples from pilot sessions
 
 2. Improve product validation:
    - run the validation protocol with 5 to 8 older adults
