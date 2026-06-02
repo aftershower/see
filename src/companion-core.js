@@ -200,7 +200,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
 
   if (safety.level === "verify") {
     return {
-      text: "先别急着做决定，慢下来是对的。别先转钱、别发验证码或证件。可以找一个信得过的人一起看看，或用你自己找来的官方电话核实。",
+      text: `先别急着做决定，慢下来是对的。别先转钱、别发验证码或证件。可以找一个信得过的人一起看看，${resources.verify}`,
       safety,
       memories: []
     };
@@ -254,18 +254,21 @@ function safetyResources(locale = "zh-CN") {
   if (normalized.startsWith("en-us")) {
     return {
       emergency: "911",
-      crisis: "988 或 911"
+      crisis: "988 或 911",
+      verify: "再用你自己找来的官方渠道核实，比如卡背面的银行电话或 .gov 官方网站。"
     };
   }
   if (normalized.startsWith("zh-cn")) {
     return {
       emergency: "当地急救电话，比如 120",
-      crisis: "当地危机援助或急救电话，比如 120"
+      crisis: "当地危机援助或急救电话，比如 120",
+      verify: "再用你自己找来的官方电话、线下网点或社区渠道核实。"
     };
   }
   return {
     emergency: "当地急救电话",
-    crisis: "当地危机援助或急救电话"
+    crisis: "当地危机援助或急救电话",
+    verify: "再用你自己找来的官方渠道核实。"
   };
 }
 

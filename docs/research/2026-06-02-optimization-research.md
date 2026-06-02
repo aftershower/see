@@ -39,6 +39,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Local import restore now normalizes imported records and merges older exports with newer local conversations instead of replacing newer data.
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 - Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
+- `verify` responses now include locale-aware official-channel examples, such as card-back bank phone numbers and `.gov` sites for US users, or official phone/branch/community channels for China users.
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 
 ## Next Optimization Backlog
@@ -46,7 +47,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 1. Deepen safety and localization:
    - expand locale profiles beyond current US/China/default handling
    - keep collecting false positive/false negative examples from pilot sessions
-   - decide whether `verify` should have locale-specific official-channel examples
+   - tune `verify` examples after pilot sessions show which institutions older adults actually ask about
 
 2. Improve product validation:
    - run the validation protocol with 5 to 8 older adults

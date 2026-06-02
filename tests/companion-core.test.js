@@ -122,6 +122,14 @@ test("routes uncertainty to trusted-person verification guidance", () => {
   assert.deepEqual(reply.memories, []);
 });
 
+test("uses locale-aware official-channel examples for verification", () => {
+  const usReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "en-US" });
+  const cnReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "zh-CN" });
+
+  assert.match(usReply.text, /\.gov|卡背面|银行电话/);
+  assert.match(cnReply.text, /官方电话|线下网点|社区/);
+});
+
 test("uses locale-aware urgent and crisis resources", () => {
   const usUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-US" });
   const usCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-US" });
