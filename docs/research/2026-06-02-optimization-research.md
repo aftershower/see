@@ -24,26 +24,24 @@ The strongest lane is not a roleplay companion or AI replacement friend. It is a
 - Negative preferences are stored as preferences instead of interests.
 - Grief and "do not mention" memories are marked sensitive and skipped by proactive prompts.
 - The local static server now allowlists public assets and does not expose source, tests, or docs.
+- Safety routing now also catches medication mistakes, wandering/confusion, abuse/neglect language, remote tech-support scams, courier cash pickup, and "do not tell family" scam pressure.
+- The browser app now sends chats through `/api/chat` with a timeout and local fallback, keeping the UI aligned with the future AI-provider boundary.
+- The message stream now uses `role="log"`, announces additions only, and avoids rebuilding the entire live region on every render.
+- The local server now enforces POST+JSON for `/api/chat`, returns method/media-type errors, adds browser-hardening headers, and marks API responses `no-store`.
 
 ## Next Optimization Backlog
 
-1. Broaden safety routing:
-   - medication mistakes
-   - gas/fire/wandering/confusion
-   - abuse/coercion/neglect
-   - crypto, courier pickup, remote tech support, fake agency links
+1. Add retention/export controls:
+   - export local memories and conversations as a local file
+   - add a retention setting or one-click "forget older chats" flow
+   - handle localStorage failures with a visible but calm warning
+
+2. Deepen safety and localization:
    - locale-configurable emergency resources
+   - more abuse/coercion and fake-agency-link patterns
+   - clearer "ask a trusted person" guidance for non-emergency uncertainty
 
-2. Improve accessibility:
-   - use `role="log"` and `aria-relevant="additions"` for the message stream
-   - avoid rebuilding the entire live region on every render
-   - add clearer accessible labels for reset and memory deletion
-
-3. Align UI with the API boundary:
-   - route chat through `/api/chat` with timeout and local fallback
-   - document data flow clearly for local-only vs future AI-provider modes
-
-4. Harden server and privacy:
-   - add security headers
-   - add retention/export controls
-   - add tests for malformed API usage and storage failure
+3. Improve product validation:
+   - define elder-reader usability metrics
+   - define loneliness/support outcome questions
+   - add a caregiver/family consent boundary for future shared summaries

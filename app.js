@@ -14,6 +14,7 @@ const checkInButton = document.querySelector("#checkInButton");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#messageInput");
 const resetButton = document.querySelector("#resetButton");
+const renderedMessageIds = new Set();
 
 function defaultState() {
   return {
@@ -58,21 +59,50 @@ function addMessage(role, text, safetyLevel = "normal") {
   });
 }
 
-function handleUserText(text) {
+async function handleUserText(text) {
   const trimmed = text.trim();
   if (!trimmed) return;
 
   addMessage("user", trimmed);
-  const reply = generateCompanionReply({
-    text: trimmed,
-    memories: state.memories,
-    now: new Date()
-  });
+  saveState();
+  render();
+
+  const reply = await requestCompanionReply(trimmed);
   state.memories = mergeMemories(state.memories, reply.memories || []);
   addMessage("assistant", reply.text, reply.safety?.level || "normal");
   state.checkIn = reply.checkIn || planCheckIn({ memories: state.memories });
   saveState();
   render();
+}
+
+async function requestCompanionReply(text) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 4000);
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text, memories: state.memories }),
+      signal: controller.signal
+    });
+    if (!response.ok) {
+      throw new Error(`Companion API returned ${response.status}`);
+    }
+    return await response.json();
+  } catch {
+    return localCompanionReply(text);
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+function localCompanionReply(text) {
+  return generateCompanionReply({
+    text,
+    memories: state.memories,
+    now: new Date()
+  });
 }
 
 function render() {
@@ -86,26 +116,41 @@ function render() {
 }
 
 function renderMessages() {
-  messagesEl.innerHTML = "";
+  const activeMessageIds = new Set(state.messages.map((message) => message.id));
+  for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
+    const messageId = node.getAttribute("data-message-id");
+    if (!activeMessageIds.has(messageId)) {
+      renderedMessageIds.delete(messageId);
+      node.remove();
+    }
+  }
+
   for (const message of state.messages) {
-    const article = document.createElement("article");
-    article.className = [
-      "message",
-      `message--${message.role}`,
-      message.safetyLevel ? `message--${message.safetyLevel}` : ""
-    ].filter(Boolean).join(" ");
-
-    const meta = document.createElement("span");
-    meta.className = "message__meta";
-    meta.textContent = message.role === "user" ? "你" : "See";
-
-    const body = document.createElement("p");
-    body.textContent = message.text;
-
-    article.append(meta, body);
-    messagesEl.append(article);
+    if (renderedMessageIds.has(message.id)) continue;
+    messagesEl.append(createMessageElement(message));
+    renderedMessageIds.add(message.id);
   }
   messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function createMessageElement(message) {
+  const article = document.createElement("article");
+  article.className = [
+    "message",
+    `message--${message.role}`,
+    message.safetyLevel ? `message--${message.safetyLevel}` : ""
+  ].filter(Boolean).join(" ");
+  article.setAttribute("data-message-id", message.id);
+
+  const meta = document.createElement("span");
+  meta.className = "message__meta";
+  meta.textContent = message.role === "user" ? "你" : "See";
+
+  const body = document.createElement("p");
+  body.textContent = message.text;
+
+  article.append(meta, body);
+  return article;
 }
 
 function renderMemories() {
@@ -211,11 +256,11 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = input.value;
   input.value = "";
-  handleUserText(text);
+  void handleUserText(text);
 });
 
 checkInButton.addEventListener("click", () => {
-  handleUserText(checkInButton.textContent);
+  void handleUserText(checkInButton.textContent);
 });
 
 resetButton.addEventListener("click", () => {

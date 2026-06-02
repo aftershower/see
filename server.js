@@ -13,6 +13,11 @@ const contentTypes = {
   ".webmanifest": "application/manifest+json; charset=utf-8",
   ".svg": "image/svg+xml"
 };
+const browserHardeningHeaders = {
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "no-referrer",
+  "content-security-policy": "default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; manifest-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+};
 const publicPaths = new Set([
   "/",
   "/index.html",
@@ -31,7 +36,13 @@ export function createServer() {
         return sendJson(response, 200, { ok: true });
       }
 
-      if (url.pathname === "/api/chat" && request.method === "POST") {
+      if (url.pathname === "/api/chat") {
+        if (request.method !== "POST") {
+          return sendJson(response, 405, { error: "method_not_allowed" }, { allow: "POST" });
+        }
+        if (!isJsonRequest(request)) {
+          return sendJson(response, 415, { error: "unsupported_media_type" });
+        }
         const body = await readJson(request);
         return sendJson(response, 200, generateCompanionReply({
           text: body.text || "",
@@ -73,11 +84,16 @@ async function serveStatic(pathname, response) {
   try {
     const file = await readFile(fullPath);
     const type = contentTypes[extname(fullPath)] || "application/octet-stream";
-    response.writeHead(200, { "content-type": type });
+    response.writeHead(200, withHeaders({ "content-type": type }));
     response.end(file);
   } catch {
     sendText(response, 404, "Not found", "text/plain; charset=utf-8");
   }
+}
+
+function isJsonRequest(request) {
+  const contentType = request.headers["content-type"] || "";
+  return String(contentType).toLowerCase().split(";")[0].trim() === "application/json";
 }
 
 async function readJson(request) {
@@ -101,14 +117,25 @@ async function readJson(request) {
   }
 }
 
-function sendJson(response, status, payload) {
-  response.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+function sendJson(response, status, payload, headers = {}) {
+  response.writeHead(status, withHeaders({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    ...headers
+  }));
   response.end(JSON.stringify(payload));
 }
 
 function sendText(response, status, text, type) {
-  response.writeHead(status, { "content-type": type });
+  response.writeHead(status, withHeaders({ "content-type": type }));
   response.end(text);
+}
+
+function withHeaders(headers = {}) {
+  return {
+    ...browserHardeningHeaders,
+    ...headers
+  };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

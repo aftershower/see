@@ -33,6 +33,10 @@ test("classifies urgent medical, crisis, scam, support, and normal messages", ()
   assert.deepEqual(classifySafety("我不想活了，觉得没人需要我").level, "crisis");
   assert.deepEqual(classifySafety("陌生人让我买礼品卡，还要银行卡验证码").level, "scam");
   assert.deepEqual(classifySafety("有人说自己是社保局，让我买 Apple 礼品卡，把 PIN 发过去").level, "scam");
+  assert.deepEqual(classifySafety("电脑客服让我开远程控制，还说派快递来取现金，别告诉家人").level, "scam");
+  assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
+  assert.deepEqual(classifySafety("护工打我，还不让我告诉女儿").level, "urgent");
+  assert.deepEqual(classifySafety("我迷路了，不知道家在哪").level, "urgent");
   assert.deepEqual(classifySafety("今天有点孤独，没人说话").level, "support");
   assert.deepEqual(classifySafety("今天吃了面条").level, "normal");
 });
@@ -86,9 +90,12 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   const urgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [] });
   const crisis = generateCompanionReply({ text: "我不想活了。", memories: [] });
   const scam = generateCompanionReply({ text: "陌生人让我马上转账买礼品卡。", memories: [] });
+  const medication = generateCompanionReply({ text: "我好像吃错药了，头很晕。", memories: [] });
 
   assert.equal(urgent.safety.level, "urgent");
   assert.match(urgent.text, /急救|120|911|身边的人/);
+  assert.equal(medication.safety.level, "urgent");
+  assert.match(medication.text, /急救|120|911|医生|身边的人/);
   assert.equal(crisis.safety.level, "crisis");
   assert.match(crisis.text, /信得过的人|急救|危机/);
   assert.equal(scam.safety.level, "scam");

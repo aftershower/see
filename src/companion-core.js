@@ -1,10 +1,18 @@
 const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency/i;
+const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|药物过量|过量服药|药.*头晕|头晕.*药|medication|overdose/i;
+const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|不让我告诉)|被打|家暴|虐待|不给饭|不给药|锁起来|不让我告诉|abuse|neglect/i;
+const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回家|不认识路|wandering|lost/i;
 const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|结束生命|suicide|kill myself|self harm/i;
-const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|gift card|wire transfer|verification code|crypto|bitcoin/i;
+const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|gift card|wire transfer|verification code|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
-  if (URGENT_PATTERN.test(text)) {
+  if (
+    URGENT_PATTERN.test(text)
+    || MEDICATION_URGENCY_PATTERN.test(text)
+    || PERSONAL_DANGER_PATTERN.test(text)
+    || WANDERING_PATTERN.test(text)
+  ) {
     return { level: "urgent", reason: "medical_urgency" };
   }
   if (CRISIS_PATTERN.test(text)) {

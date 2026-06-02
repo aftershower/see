@@ -16,10 +16,10 @@
           <p class="eyebrow">今日陪伴</p>
           <h1>陪你聊聊</h1>
         </div>
-        <button id="resetButton" class="ghost-button" type="button">清空</button>
+        <button id="resetButton" class="ghost-button" type="button" aria-label="清空聊天和记忆">清空</button>
       </header>
 
-      <div id="messages" class="messages" aria-live="polite"></div>
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions" aria-atomic="false"></div>
 
       <form id="chatForm" class="composer">
         <label class="sr-only" for="messageInput">想说的话</label>

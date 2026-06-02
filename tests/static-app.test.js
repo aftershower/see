@@ -7,10 +7,14 @@ test("app shell is a chat-first elder companion interface", async () => {
 
   assert.match(html, /<html lang="zh-CN">/);
   assert.match(html, /id="messages"/);
+  assert.match(html, /id="messages"[^>]*role="log"/);
+  assert.match(html, /id="messages"[^>]*aria-relevant="additions"/);
+  assert.match(html, /id="messages"[^>]*aria-atomic="false"/);
   assert.match(html, /id="chatForm"/);
   assert.match(html, /id="memoryList"/);
   assert.match(html, /id="checkInButton"/);
   assert.match(html, /privacyNotice/);
+  assert.match(html, /id="resetButton"[^>]*aria-label="清空聊天和记忆"/);
   assert.doesNotMatch(html, /hero|landing|pricing/i);
 });
 
@@ -27,6 +31,8 @@ test("browser app wires local memory and companion core", async () => {
   const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
 
   assert.match(app, /generateCompanionReply/);
+  assert.match(app, /fetch\("\/api\/chat"/);
+  assert.match(app, /localCompanionReply/);
   assert.match(app, /mergeMemories/);
   assert.match(app, /localStorage/);
   assert.match(app, /checkInButton/);
