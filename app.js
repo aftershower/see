@@ -96,7 +96,7 @@ async function requestCompanionReply(text) {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text, memories: state.memories }),
+      body: JSON.stringify({ text, memories: state.memories, locale: currentLocale() }),
       signal: controller.signal
     });
     if (!response.ok) {
@@ -114,8 +114,13 @@ function localCompanionReply(text) {
   return generateCompanionReply({
     text,
     memories: state.memories,
-    now: new Date()
+    now: new Date(),
+    locale: currentLocale()
   });
+}
+
+function currentLocale() {
+  return navigator.language || "zh-CN";
 }
 
 function render() {

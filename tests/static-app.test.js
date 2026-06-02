@@ -40,6 +40,7 @@ test("browser app wires local memory and companion core", async () => {
 
   assert.match(app, /generateCompanionReply/);
   assert.match(app, /fetch\("\/api\/chat"/);
+  assert.match(app, /navigator\.language/);
   assert.match(app, /localCompanionReply/);
   assert.match(app, /mergeMemories/);
   assert.match(app, /localStorage/);

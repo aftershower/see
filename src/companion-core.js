@@ -165,13 +165,14 @@ export function planCheckIn({ now = new Date(), lastMessageAt = null, memories =
   };
 }
 
-export function generateCompanionReply({ text = "", memories = [], now = new Date() } = {}) {
+export function generateCompanionReply({ text = "", memories = [], now = new Date(), locale = "zh-CN" } = {}) {
   const safety = classifySafety(text);
   const extractedMemories = extractMemories(text);
+  const resources = safetyResources(locale);
 
   if (safety.level === "urgent") {
     return {
-      text: "这听起来可能很紧急。请马上联系身边的人，或拨打当地急救电话，比如 120 或 911。先别一个人硬撑。",
+      text: `这听起来可能很紧急。请马上联系身边的人，或拨打${resources.emergency}。先别一个人硬撑。`,
       safety,
       memories: []
     };
@@ -179,7 +180,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
 
   if (safety.level === "crisis") {
     return {
-      text: "听到你这么难受，我很心疼。请现在就联系一个信得过的人陪你，或拨打当地危机援助/急救电话。你不需要一个人扛着。",
+      text: `听到你这么难受，我很心疼。请现在就联系一个信得过的人陪你，或拨打${resources.crisis}。你不需要一个人扛着。`,
       safety,
       memories: []
     };
@@ -234,6 +235,26 @@ function extractPeople(text) {
     .replace(/^(?:我|俺|的)?(?:女儿|儿子|老伴|孙子|孙女|朋友|邻居|护工|妹妹|哥哥|姐姐|弟弟)?/, "")
     .replace(/(今天|明天|周末|昨天|来看我|来过|要来|还来|说|她|他|已经|去世|走了|不在了|过世).*$/, "")
   ).filter(Boolean);
+}
+
+function safetyResources(locale = "zh-CN") {
+  const normalized = String(locale || "").toLowerCase();
+  if (normalized.startsWith("en-us")) {
+    return {
+      emergency: "911",
+      crisis: "988 或 911"
+    };
+  }
+  if (normalized.startsWith("zh-cn")) {
+    return {
+      emergency: "当地急救电话，比如 120",
+      crisis: "当地危机援助或急救电话，比如 120"
+    };
+  }
+  return {
+    emergency: "当地急救电话",
+    crisis: "当地危机援助或急救电话"
+  };
 }
 
 function extractInterests(text) {

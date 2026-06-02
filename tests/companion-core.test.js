@@ -104,6 +104,17 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(scam.text, /PIN|收据|ReportFraud/);
 });
 
+test("uses locale-aware urgent and crisis resources", () => {
+  const usUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-US" });
+  const usCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-US" });
+  const cnUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "zh-CN" });
+
+  assert.match(usUrgent.text, /911/);
+  assert.doesNotMatch(usUrgent.text, /120/);
+  assert.match(usCrisis.text, /988/);
+  assert.match(cnUrgent.text, /120/);
+});
+
 test("does not persist memories from urgent, crisis, or scam disclosures", () => {
   const urgent = generateCompanionReply({ text: "我胸口很痛，女儿小玲不在家。", memories: [] });
   const crisis = generateCompanionReply({ text: "我不想活了，我朋友老张也走了。", memories: [] });

@@ -36,6 +36,21 @@ test("chat endpoint returns companion reply without external services", async ()
   });
 });
 
+test("chat endpoint passes locale into safety replies", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text: "我不想活了。", memories: [], locale: "en-US" })
+    });
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.safety.level, "crisis");
+    assert.match(payload.text, /988/);
+  });
+});
+
 test("chat endpoint requires POST requests with JSON bodies", async () => {
   await withServer(async (baseUrl) => {
     const getResponse = await fetch(`${baseUrl}/api/chat`);

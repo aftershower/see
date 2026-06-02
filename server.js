@@ -46,7 +46,8 @@ export function createServer() {
         const body = await readJson(request);
         return sendJson(response, 200, generateCompanionReply({
           text: body.text || "",
-          memories: Array.isArray(body.memories) ? body.memories : []
+          memories: Array.isArray(body.memories) ? body.memories : [],
+          locale: body.locale || "zh-CN"
         }));
       }
 
