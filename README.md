@@ -20,6 +20,8 @@ npm test
 
 V1 stores conversation memory locally in the browser. There is no account system, family dashboard, continuous microphone, or cloud memory service.
 
+The prototype includes basic local-data controls: export the current record as JSON, trim older chat messages while keeping long-term memory, delete a single memory, or clear everything.
+
 The browser app sends chats through `/api/chat` as a stable boundary for future AI providers. In V1 the endpoint uses the built-in demo companion engine, and the browser falls back to the same local engine if the request times out or fails.
 
 ## Safety Boundaries

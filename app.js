@@ -14,7 +14,11 @@ const checkInButton = document.querySelector("#checkInButton");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#messageInput");
 const resetButton = document.querySelector("#resetButton");
+const exportButton = document.querySelector("#exportButton");
+const trimHistoryButton = document.querySelector("#trimHistoryButton");
+const storageWarning = document.querySelector("#storageWarning");
 const renderedMessageIds = new Set();
+const MAX_RETAINED_MESSAGES = 12;
 
 function defaultState() {
   return {
@@ -46,7 +50,14 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    setStorageWarning("");
+    return true;
+  } catch {
+    setStorageWarning("这台设备暂时没有保存新的聊天。你仍可以继续聊，稍后再试。");
+    return false;
+  }
 }
 
 function addMessage(role, text, safetyLevel = "normal") {
@@ -193,6 +204,40 @@ function removeMemory(memoryId) {
   render();
 }
 
+function exportState() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    messages: state.messages,
+    memories: state.memories,
+    checkIn: state.checkIn
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `see-companion-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function trimHistory() {
+  if (state.messages.length <= MAX_RETAINED_MESSAGES) return;
+  const confirmed = window.confirm("只保留最近 12 条聊天吗？长期记忆会继续保留。");
+  if (!confirmed) return;
+  state.messages = state.messages.slice(-MAX_RETAINED_MESSAGES);
+  state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
+  saveState();
+  render();
+}
+
+function setStorageWarning(message) {
+  storageWarning.textContent = message;
+  storageWarning.hidden = !message;
+}
+
 function renderTopics() {
   topicListEl.innerHTML = "";
   const topics = buildTopics();
@@ -262,6 +307,9 @@ form.addEventListener("submit", (event) => {
 checkInButton.addEventListener("click", () => {
   void handleUserText(checkInButton.textContent);
 });
+
+exportButton.addEventListener("click", exportState);
+trimHistoryButton.addEventListener("click", trimHistory);
 
 resetButton.addEventListener("click", () => {
   const confirmed = window.confirm("要清空这次体验里的聊天和记忆吗？");

@@ -28,20 +28,21 @@ The strongest lane is not a roleplay companion or AI replacement friend. It is a
 - The browser app now sends chats through `/api/chat` with a timeout and local fallback, keeping the UI aligned with the future AI-provider boundary.
 - The message stream now uses `role="log"`, announces additions only, and avoids rebuilding the entire live region on every render.
 - The local server now enforces POST+JSON for `/api/chat`, returns method/media-type errors, adds browser-hardening headers, and marks API responses `no-store`.
+- Users can now export local companion data as JSON, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
 
 ## Next Optimization Backlog
 
-1. Add retention/export controls:
-   - export local memories and conversations as a local file
-   - add a retention setting or one-click "forget older chats" flow
-   - handle localStorage failures with a visible but calm warning
-
-2. Deepen safety and localization:
+1. Deepen safety and localization:
    - locale-configurable emergency resources
    - more abuse/coercion and fake-agency-link patterns
    - clearer "ask a trusted person" guidance for non-emergency uncertainty
 
-3. Improve product validation:
+2. Improve product validation:
    - define elder-reader usability metrics
    - define loneliness/support outcome questions
    - add a caregiver/family consent boundary for future shared summaries
+
+3. Strengthen local persistence:
+   - consider IndexedDB for larger histories
+   - define an iCloud/CloudKit migration path for a native iOS version
+   - add import/restore after JSON export

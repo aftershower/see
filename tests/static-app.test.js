@@ -14,6 +14,9 @@ test("app shell is a chat-first elder companion interface", async () => {
   assert.match(html, /id="memoryList"/);
   assert.match(html, /id="checkInButton"/);
   assert.match(html, /privacyNotice/);
+  assert.match(html, /id="exportButton"/);
+  assert.match(html, /id="trimHistoryButton"/);
+  assert.match(html, /id="storageWarning"[^>]*aria-live="polite"/);
   assert.match(html, /id="resetButton"[^>]*aria-label="清空聊天和记忆"/);
   assert.doesNotMatch(html, /hero|landing|pricing/i);
 });
@@ -23,6 +26,8 @@ test("styles use large readable text and responsive layout", async () => {
 
   assert.match(css, /font-size:\s*(?:20|21|22)px/);
   assert.match(css, /\.app-shell/);
+  assert.match(css, /\.privacy-actions/);
+  assert.match(css, /\.storage-warning/);
   assert.match(css, /@media \(max-width:\s*860px\)/);
   assert.match(css, /:focus-visible/);
 });
@@ -37,6 +42,13 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /localStorage/);
   assert.match(app, /checkInButton/);
   assert.match(app, /resetButton/);
+  assert.match(app, /exportButton/);
+  assert.match(app, /trimHistoryButton/);
+  assert.match(app, /storageWarning/);
+  assert.match(app, /exportState/);
+  assert.match(app, /trimHistory/);
+  assert.match(app, /URL\.createObjectURL/);
+  assert.match(app, /new Blob/);
   assert.match(app, /removeMemory/);
   assert.match(app, /data-memory-id/);
 });
