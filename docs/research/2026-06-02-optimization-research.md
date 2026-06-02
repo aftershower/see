@@ -35,6 +35,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Users can now export local companion data as JSON, import a previous JSON export, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
 - Urgent and crisis replies now use locale-aware emergency resources, with the browser passing `navigator.language` through `/api/chat` and the local fallback.
 - Safety routing now also catches fake-agency app downloads, screen-sharing pressure, secrecy demands, suspicious links, identity-document coercion, and "not allowed to leave" abuse signals.
+- A validation protocol now defines pilot tasks and metrics for elder-reader usability, loneliness/support outcomes, privacy trust, caregiver consent boundaries, and safety false positive/false negative review.
 
 ## Next Optimization Backlog
 
@@ -44,9 +45,9 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - review false positives from broad scam terms such as suspicious links and identity documents
 
 2. Improve product validation:
-   - define elder-reader usability metrics
-   - define loneliness/support outcome questions
-   - add a caregiver/family consent boundary for future shared summaries
+   - run the validation protocol with 5 to 8 older adults
+   - convert observed blockers into product changes
+   - keep caregiver/family summary sharing opt-in and older-adult controlled
 
 3. Strengthen local persistence:
    - consider IndexedDB for larger histories

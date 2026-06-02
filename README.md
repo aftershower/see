@@ -33,3 +33,5 @@ The prototype avoids storing memories from urgent, crisis, or scam disclosures b
 ## Research Notes
 
 Current optimization notes live in `docs/research/2026-06-02-optimization-research.md`.
+
+The validation protocol for elder-reader usability, loneliness/support outcomes, privacy trust, and safety-review evidence lives in `docs/research/2026-06-02-validation-protocol.md`.
