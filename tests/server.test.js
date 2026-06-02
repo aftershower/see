@@ -46,3 +46,15 @@ test("static server returns the app shell", async () => {
     assert.match(response.headers.get("content-type"), /text\/html/);
   });
 });
+
+test("static server does not expose source, tests, docs, or malformed paths", async () => {
+  await withServer(async (baseUrl) => {
+    const sourceResponse = await fetch(`${baseUrl}/tests/server.test.js`);
+    const docsResponse = await fetch(`${baseUrl}/docs/research/2026-06-02-optimization-research.md`);
+    const malformedResponse = await fetch(`${baseUrl}/%E0%A4%A`);
+
+    assert.equal(sourceResponse.status, 404);
+    assert.equal(docsResponse.status, 404);
+    assert.equal(malformedResponse.status, 400);
+  });
+});

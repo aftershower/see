@@ -26,7 +26,7 @@ The local server exposes `/api/chat` as a stable boundary for future AI provider
 
 See is not an emergency service, medical device, therapist, or caregiver monitor. It should respond warmly, but urgent medical symptoms, self-harm, scams, abuse, or immediate danger should route the user toward real-world help.
 
-The prototype avoids storing memories from urgent, crisis, or scam disclosures by default. Long-term memory is meant for ordinary life context such as people, interests, routines, food, and recent moments.
+The prototype avoids storing memories from urgent, crisis, or scam disclosures by default. Long-term memory is meant for ordinary life context such as people, interests, routines, food, and recent moments. Negative preferences and grief-related "do not mention" notes are treated as sensitive, so proactive prompts should not bring them up casually.
 
 ## Research Notes
 

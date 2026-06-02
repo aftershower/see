@@ -22,7 +22,8 @@ export function classifySafety(text = "") {
 export function extractMemories(text = "", sourceMessageId = safeId("message")) {
   const memories = [];
   const now = new Date().toISOString();
-  const add = (type, label, detail, confidence = 0.76) => {
+  const sensitiveContext = /别再提|不要提|别提|去世|走了|不在了|过世/.test(text);
+  const add = (type, label, detail, confidence = 0.76, metadata = {}) => {
     const cleanLabel = type === "routine" || type === "recent_event"
       ? basicMemoryLabel(label)
       : cleanMemoryLabel(label);
@@ -33,14 +34,28 @@ export function extractMemories(text = "", sourceMessageId = safeId("message")) 
       label: cleanLabel,
       detail,
       confidence,
+      sensitivity: metadata.sensitivity || "normal",
+      polarity: metadata.polarity || "neutral",
+      doNotMention: metadata.doNotMention || false,
       sourceMessageId,
       createdAt: now,
       updatedAt: now
     });
   };
 
+  for (const preference of extractNegativePreferences(text)) {
+    add("preference", preference, `用户表达了不喜欢或不要再提：${preference}`, 0.82, {
+      polarity: "negative",
+      sensitivity: /别再提|不要提|别提/.test(text) ? "sensitive" : "normal",
+      doNotMention: /别再提|不要提|别提/.test(text)
+    });
+  }
+
   for (const label of extractPeople(text)) {
-    add("person", label, `用户提到这个人：${label}`, 0.78);
+    add("person", label, `用户提到这个人：${label}`, 0.78, {
+      sensitivity: sensitiveContext ? "sensitive" : "normal",
+      doNotMention: sensitiveContext
+    });
   }
 
   for (const label of extractInterests(text)) {
@@ -88,7 +103,7 @@ export function planCheckIn({ now = new Date(), lastMessageAt = null, memories =
   const quietHours = lastMessageAt ? (now.getTime() - new Date(lastMessageAt).getTime()) / 36e5 : 999;
   const routine = memories.find((item) => item.type === "routine");
   const interest = memories.find((item) => item.type === "interest");
-  const person = memories.find((item) => item.type === "person");
+  const person = memories.find((item) => item.type === "person" && item.sensitivity !== "sensitive" && !item.doNotMention);
   const createdAt = now.toISOString();
 
   if (hour < 11) {
@@ -209,11 +224,14 @@ function extractPeople(text) {
 
   return people.map((name) => name
     .replace(/^(?:我|俺|的)?(?:女儿|儿子|老伴|孙子|孙女|朋友|邻居|护工|妹妹|哥哥|姐姐|弟弟)?/, "")
-    .replace(/(今天|明天|周末|昨天|来看我|来过|要来|还来|说).*$/, "")
+    .replace(/(今天|明天|周末|昨天|来看我|来过|要来|还来|说|她|他|已经|去世|走了|不在了|过世).*$/, "")
   ).filter(Boolean);
 }
 
 function extractInterests(text) {
+  if (/不喜欢|别再提|不要提|别提/.test(text)) {
+    return [];
+  }
   const interests = [];
   const patterns = [
     /喜欢(?:和[^，。,.!?！？]{1,8})?(?:一起)?([^，。,.!?！？]{2,12})/g,
@@ -229,6 +247,19 @@ function extractInterests(text) {
     }
   }
   return interests;
+}
+
+function extractNegativePreferences(text) {
+  const preferences = [];
+  const dislikePattern = /不喜欢(?:吃|喝|看|听|做)?([^，。,.!?！？\s]{1,12})/g;
+  const doNotMentionPattern = /(?:别再提|不要提|别提)(?:我)?(?:女儿|儿子|老伴|朋友|孙子|孙女)?([^，。,.!?！？\s]{1,12})/g;
+  for (const match of text.matchAll(dislikePattern)) {
+    preferences.push(match[1]);
+  }
+  for (const match of text.matchAll(doNotMentionPattern)) {
+    preferences.push(`不要提${match[1].replace(/(她|他|已经|去世|走了|不在了|过世).*$/, "")}`);
+  }
+  return preferences.filter(Boolean);
 }
 
 function dedupeMemories(memories) {

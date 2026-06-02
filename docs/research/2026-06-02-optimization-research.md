@@ -21,32 +21,29 @@ The strongest lane is not a roleplay companion or AI replacement friend. It is a
 - Quiet-period check-ins now suggest real-world contact, such as calling or messaging a known person.
 - The UI now displays a visible privacy note near memory.
 - Individual memories can be deleted instead of requiring all-or-nothing reset.
+- Negative preferences are stored as preferences instead of interests.
+- Grief and "do not mention" memories are marked sensitive and skipped by proactive prompts.
+- The local static server now allowlists public assets and does not expose source, tests, or docs.
 
 ## Next Optimization Backlog
 
-1. Add memory sensitivity and polarity:
-   - Do not treat "I do not like noodles" as an interest.
-   - Mark grief, estrangement, and "do not mention" as sensitive memories.
-   - Gate sensitive memories behind user confirmation.
-
-2. Broaden safety routing:
+1. Broaden safety routing:
    - medication mistakes
    - gas/fire/wandering/confusion
    - abuse/coercion/neglect
    - crypto, courier pickup, remote tech support, fake agency links
    - locale-configurable emergency resources
 
-3. Improve accessibility:
+2. Improve accessibility:
    - use `role="log"` and `aria-relevant="additions"` for the message stream
    - avoid rebuilding the entire live region on every render
    - add clearer accessible labels for reset and memory deletion
 
-4. Align UI with the API boundary:
+3. Align UI with the API boundary:
    - route chat through `/api/chat` with timeout and local fallback
    - document data flow clearly for local-only vs future AI-provider modes
 
-5. Harden server and privacy:
-   - serve an explicit allowlist of public files
+4. Harden server and privacy:
    - add security headers
    - add retention/export controls
-   - add tests for static file leaks and malformed API usage
+   - add tests for malformed API usage and storage failure

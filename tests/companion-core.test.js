@@ -106,3 +106,22 @@ test("does not persist memories from urgent, crisis, or scam disclosures", () =>
   assert.deepEqual(crisis.memories, []);
   assert.deepEqual(scam.memories, []);
 });
+
+test("captures negative preferences without turning them into interests", () => {
+  const memories = extractMemories("我不喜欢吃面条，别给我提这个。", "m-negative");
+
+  assert.ok(memories.some((item) => item.type === "preference" && item.polarity === "negative" && item.label.includes("面条")));
+  assert.equal(memories.some((item) => item.type === "interest" && item.label.includes("面条")), false);
+});
+
+test("marks grief and do-not-mention memories as sensitive and avoids proactive prompts", () => {
+  const memories = extractMemories("别再提我女儿小玲，她已经去世了。", "m-sensitive");
+
+  assert.ok(memories.some((item) => item.sensitivity === "sensitive" && item.doNotMention === true));
+  const quiet = planCheckIn({
+    now: new Date("2026-06-02T21:00:00"),
+    lastMessageAt: "2026-06-02T08:00:00",
+    memories
+  });
+  assert.doesNotMatch(quiet.text, /小玲/);
+});

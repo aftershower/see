@@ -13,6 +13,14 @@ const contentTypes = {
   ".webmanifest": "application/manifest+json; charset=utf-8",
   ".svg": "image/svg+xml"
 };
+const publicPaths = new Set([
+  "/",
+  "/index.html",
+  "/styles.css",
+  "/app.js",
+  "/manifest.webmanifest",
+  "/src/companion-core.js"
+]);
 
 export function createServer() {
   return http.createServer(async (request, response) => {
@@ -46,7 +54,15 @@ export function createServer() {
 
 async function serveStatic(pathname, response) {
   const requested = pathname === "/" ? "/index.html" : pathname;
-  const decoded = decodeURIComponent(requested);
+  let decoded;
+  try {
+    decoded = decodeURIComponent(requested);
+  } catch {
+    return sendText(response, 400, "Bad request", "text/plain; charset=utf-8");
+  }
+  if (!publicPaths.has(pathname)) {
+    return sendText(response, 404, "Not found", "text/plain; charset=utf-8");
+  }
   const fullPath = normalize(join(root, decoded));
   const relation = relative(root, fullPath);
 
