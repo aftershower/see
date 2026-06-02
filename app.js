@@ -128,9 +128,24 @@ function renderMemories() {
     const type = document.createElement("span");
     type.textContent = memoryTypeLabel(item.type);
 
-    row.append(label, type);
+    const removeButton = document.createElement("button");
+    removeButton.className = "memory-remove";
+    removeButton.type = "button";
+    removeButton.setAttribute("data-memory-id", item.id);
+    removeButton.textContent = "删除";
+    removeButton.setAttribute("aria-label", `删除记忆：${item.label}`);
+    removeButton.addEventListener("click", () => removeMemory(item.id));
+
+    row.append(label, type, removeButton);
     memoryListEl.append(row);
   }
+}
+
+function removeMemory(memoryId) {
+  state.memories = state.memories.filter((item) => item.id !== memoryId);
+  state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
+  saveState();
+  render();
 }
 
 function renderTopics() {

@@ -32,6 +32,7 @@ test("classifies urgent medical, crisis, scam, support, and normal messages", ()
   assert.deepEqual(classifySafety("我胸口很痛，喘不上气").level, "urgent");
   assert.deepEqual(classifySafety("我不想活了，觉得没人需要我").level, "crisis");
   assert.deepEqual(classifySafety("陌生人让我买礼品卡，还要银行卡验证码").level, "scam");
+  assert.deepEqual(classifySafety("有人说自己是社保局，让我买 Apple 礼品卡，把 PIN 发过去").level, "scam");
   assert.deepEqual(classifySafety("今天有点孤独，没人说话").level, "support");
   assert.deepEqual(classifySafety("今天吃了面条").level, "normal");
 });
@@ -52,6 +53,21 @@ test("plans check-ins using day rhythm and memories", () => {
   assert.match(morning.text, /早|晨|散步/);
   assert.equal(evening.slot, "evening");
   assert.match(evening.text, /越剧|今天/);
+});
+
+test("plans connection nudges that encourage real-world contact and activities", () => {
+  const quiet = planCheckIn({
+    now: new Date("2026-06-02T21:00:00"),
+    lastMessageAt: "2026-06-02T08:00:00",
+    memories: [
+      { type: "person", label: "小玲", detail: "女儿" },
+      { type: "interest", label: "包饺子", detail: "喜欢包饺子" }
+    ]
+  });
+
+  assert.equal(quiet.slot, "quiet");
+  assert.match(quiet.text, /小玲/);
+  assert.match(quiet.text, /电话|发个消息|明天/);
 });
 
 test("generates short elder-first replies with extracted memories", () => {
@@ -76,5 +92,17 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.equal(crisis.safety.level, "crisis");
   assert.match(crisis.text, /信得过的人|急救|危机/);
   assert.equal(scam.safety.level, "scam");
-  assert.match(scam.text, /别急|验证码|官方|信得过的人/);
+  assert.match(scam.text, /别急|慢下来/);
+  assert.match(scam.text, /礼品卡|验证码/);
+  assert.match(scam.text, /PIN|收据|ReportFraud/);
+});
+
+test("does not persist memories from urgent, crisis, or scam disclosures", () => {
+  const urgent = generateCompanionReply({ text: "我胸口很痛，女儿小玲不在家。", memories: [] });
+  const crisis = generateCompanionReply({ text: "我不想活了，我朋友老张也走了。", memories: [] });
+  const scam = generateCompanionReply({ text: "社保局让我把 Apple 礼品卡 PIN 发过去。", memories: [] });
+
+  assert.deepEqual(urgent.memories, []);
+  assert.deepEqual(crisis.memories, []);
+  assert.deepEqual(scam.memories, []);
 });

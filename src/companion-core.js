@@ -1,6 +1,6 @@
-const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|昏倒|流血|急救|救命|heart|stroke|emergency/i;
-const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|suicide|kill myself|self harm/i;
-const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|gift card|wire transfer|verification code/i;
+const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency/i;
+const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|结束生命|suicide|kill myself|self harm/i;
+const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|gift card|wire transfer|verification code|crypto|bitcoin/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
@@ -125,7 +125,9 @@ export function planCheckIn({ now = new Date(), lastMessageAt = null, memories =
     return {
       id: `checkin-quiet-${createdAt}`,
       slot: "quiet",
-      text: person ? `今天安静了挺久。要不要聊聊${person.label}最近怎么样？` : "今天安静了挺久。我在这儿，想说两句也行。",
+      text: person
+        ? `今天安静了挺久。要不要给${person.label}打个电话或发个消息？也可以先和我想想明天的一件小事。`
+        : "今天安静了挺久。我在这儿，想说两句也行。也可以想想明天要不要做一件喜欢的小事。",
       reason: "quiet_period",
       createdAt
     };
@@ -148,7 +150,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
     return {
       text: "这听起来可能很紧急。请马上联系身边的人，或拨打当地急救电话，比如 120 或 911。先别一个人硬撑。",
       safety,
-      memories: extractedMemories
+      memories: []
     };
   }
 
@@ -156,15 +158,15 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
     return {
       text: "听到你这么难受，我很心疼。请现在就联系一个信得过的人陪你，或拨打当地危机援助/急救电话。你不需要一个人扛着。",
       safety,
-      memories: extractedMemories
+      memories: []
     };
   }
 
   if (safety.level === "scam") {
     return {
-      text: "这件事先别急着转钱或给验证码。请挂断或停下来，打官方电话确认，也可以先问一个信得过的人。",
+      text: "这可能是诈骗。先慢下来，别转钱、别给验证码、礼品卡号码或 PIN。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
       safety,
-      memories: extractedMemories
+      memories: []
     };
   }
 

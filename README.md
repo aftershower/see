@@ -21,3 +21,13 @@ npm test
 V1 stores conversation memory locally in the browser. There is no account system, family dashboard, continuous microphone, or cloud memory service.
 
 The local server exposes `/api/chat` as a stable boundary for future AI providers. In V1 it uses the built-in demo companion engine, so the prototype works without API keys or external services.
+
+## Safety Boundaries
+
+See is not an emergency service, medical device, therapist, or caregiver monitor. It should respond warmly, but urgent medical symptoms, self-harm, scams, abuse, or immediate danger should route the user toward real-world help.
+
+The prototype avoids storing memories from urgent, crisis, or scam disclosures by default. Long-term memory is meant for ordinary life context such as people, interests, routines, food, and recent moments.
+
+## Research Notes
+
+Current optimization notes live in `docs/research/2026-06-02-optimization-research.md`.

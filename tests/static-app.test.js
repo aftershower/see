@@ -10,6 +10,7 @@ test("app shell is a chat-first elder companion interface", async () => {
   assert.match(html, /id="chatForm"/);
   assert.match(html, /id="memoryList"/);
   assert.match(html, /id="checkInButton"/);
+  assert.match(html, /privacyNotice/);
   assert.doesNotMatch(html, /hero|landing|pricing/i);
 });
 
@@ -30,6 +31,8 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /localStorage/);
   assert.match(app, /checkInButton/);
   assert.match(app, /resetButton/);
+  assert.match(app, /removeMemory/);
+  assert.match(app, /data-memory-id/);
 });
 
 test("manifest defines installable app identity", async () => {
