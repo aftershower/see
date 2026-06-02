@@ -3,6 +3,10 @@ import {
   mergeMemories,
   planCheckIn
 } from "./src/companion-core.js";
+import {
+  needsImportConflictConfirmation,
+  normalizeImportedState
+} from "./src/local-data.js";
 
 const STORAGE_KEY = "see.elderCompanion.v1";
 const state = loadState();
@@ -238,6 +242,10 @@ function importState(event) {
   reader.addEventListener("load", () => {
     try {
       const imported = JSON.parse(String(reader.result || "{}"));
+      if (needsImportConflictConfirmation(state, imported)) {
+        const confirmed = window.confirm("导入的记录比当前聊天旧。继续导入会覆盖现在的聊天和记忆，要继续吗？");
+        if (!confirmed) return;
+      }
       applyImportedState(imported);
       setStorageWarning("");
     } catch {
@@ -254,31 +262,11 @@ function importState(event) {
 }
 
 function applyImportedState(imported) {
-  if (!imported || !Array.isArray(imported.messages) || !Array.isArray(imported.memories)) {
-    throw new Error("Invalid See export");
-  }
+  const importedState = normalizeImportedState(imported, { createId });
 
-  const messages = imported.messages
-    .filter((item) => item && typeof item.text === "string" && ["assistant", "user"].includes(item.role))
-    .map((item) => ({
-      id: typeof item.id === "string" ? item.id : createId(item.role),
-      role: item.role,
-      text: item.text,
-      safetyLevel: item.safetyLevel || "normal",
-      createdAt: item.createdAt || new Date().toISOString()
-    }));
-  if (messages.length === 0) {
-    throw new Error("Imported export has no messages");
-  }
-
-  state.messages = messages;
-  state.memories = imported.memories
-    .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
-    .map((item) => ({
-      ...item,
-      id: typeof item.id === "string" ? item.id : createId("memory")
-    }));
-  state.checkIn = imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null;
+  state.messages = importedState.messages;
+  state.memories = importedState.memories;
+  state.checkIn = importedState.checkIn;
   renderedMessageIds.clear();
   for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
     node.remove();

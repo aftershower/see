@@ -24,7 +24,8 @@ const publicPaths = new Set([
   "/styles.css",
   "/app.js",
   "/manifest.webmanifest",
-  "/src/companion-core.js"
+  "/src/companion-core.js",
+  "/src/local-data.js"
 ]);
 
 export function createServer() {

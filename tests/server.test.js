@@ -79,6 +79,17 @@ test("static server returns the app shell", async () => {
   });
 });
 
+test("static server serves public browser modules", async () => {
+  await withServer(async (baseUrl) => {
+    const coreResponse = await fetch(`${baseUrl}/src/companion-core.js`);
+    const localDataResponse = await fetch(`${baseUrl}/src/local-data.js`);
+
+    assert.equal(coreResponse.status, 200);
+    assert.equal(localDataResponse.status, 200);
+    assert.match(await localDataResponse.text(), /normalizeImportedState/);
+  });
+});
+
 test("server adds privacy and browser-hardening headers", async () => {
   await withServer(async (baseUrl) => {
     const staticResponse = await fetch(`${baseUrl}/`);
