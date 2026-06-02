@@ -97,7 +97,8 @@ function sendText(response, status, text, type) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT || 5173);
-  createServer().listen(port, () => {
-    console.log(`See is running at http://localhost:${port}`);
+  const host = process.env.HOST || "127.0.0.1";
+  createServer().listen(port, host, () => {
+    console.log(`See is running at http://${host}:${port}`);
   });
 }
