@@ -1,0 +1,9 @@
+{
+  "name": "See Elder Companion",
+  "short_name": "See",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f3ef",
+  "theme_color": "#286f63",
+  "description": "A private text-first companion for older adults."
+}

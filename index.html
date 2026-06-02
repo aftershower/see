@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#286f63">
+  <title>See - 陪你聊聊</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="conversation" aria-label="陪伴聊天">
+      <header class="conversation__header">
+        <div>
+          <p class="eyebrow">今日陪伴</p>
+          <h1>陪你聊聊</h1>
+        </div>
+        <button id="resetButton" class="ghost-button" type="button">清空</button>
+      </header>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
+
+      <form id="chatForm" class="composer">
+        <label class="sr-only" for="messageInput">想说的话</label>
+        <textarea id="messageInput" rows="3" placeholder="今天想聊点什么？"></textarea>
+        <button type="submit">发送</button>
+      </form>
+    </section>
+
+    <aside class="companion-panel" aria-label="记忆和问候">
+      <section class="panel-section rhythm-section">
+        <p class="eyebrow">此刻</p>
+        <h2>现在可以说</h2>
+        <button id="checkInButton" class="check-in-button" type="button"></button>
+      </section>
+
+      <section class="panel-section">
+        <p class="eyebrow">长期记忆</p>
+        <h2>我记得</h2>
+        <div id="memoryList" class="memory-list"></div>
+      </section>
+
+      <section class="panel-section">
+        <p class="eyebrow">轻轻接上</p>
+        <h2>下次聊</h2>
+        <div id="topicList" class="topic-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+import {
+  generateCompanionReply,
+  mergeMemories,
+  planCheckIn
+} from "./src/companion-core.js";
+
+const STORAGE_KEY = "see.elderCompanion.v1";
+const state = loadState();
+
+const messagesEl = document.querySelector("#messages");
+const memoryListEl = document.querySelector("#memoryList");
+const topicListEl = document.querySelector("#topicList");
+const checkInButton = document.querySelector("#checkInButton");
+const form = document.querySelector("#chatForm");
+const input = document.querySelector("#messageInput");
+const resetButton = document.querySelector("#resetButton");
+
+function defaultState() {
+  return {
+    messages: [{
+      id: createId("assistant"),
+      role: "assistant",
+      text: "我在这儿。今天想聊家里的事、老朋友，还是就说说此刻的心情？",
+      safetyLevel: "normal",
+      createdAt: new Date().toISOString()
+    }],
+    memories: [],
+    checkIn: null
+  };
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return defaultState();
+    const parsed = JSON.parse(saved);
+    return {
+      messages: Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages,
+      memories: Array.isArray(parsed.memories) ? parsed.memories : [],
+      checkIn: parsed.checkIn || null
+    };
+  } catch {
+    return defaultState();
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function addMessage(role, text, safetyLevel = "normal") {
+  state.messages.push({
+    id: createId(role),
+    role,
+    text,
+    safetyLevel,
+    createdAt: new Date().toISOString()
+  });
+}
+
+function handleUserText(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  addMessage("user", trimmed);
+  const reply = generateCompanionReply({
+    text: trimmed,
+    memories: state.memories,
+    now: new Date()
+  });
+  state.memories = mergeMemories(state.memories, reply.memories || []);
+  addMessage("assistant", reply.text, reply.safety?.level || "normal");
+  state.checkIn = reply.checkIn || planCheckIn({ memories: state.memories });
+  saveState();
+  render();
+}
+
+function render() {
+  if (!state.checkIn) {
+    state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
+  }
+  renderMessages();
+  renderMemories();
+  renderTopics();
+  renderCheckIn();
+}
+
+function renderMessages() {
+  messagesEl.innerHTML = "";
+  for (const message of state.messages) {
+    const article = document.createElement("article");
+    article.className = [
+      "message",
+      `message--${message.role}`,
+      message.safetyLevel ? `message--${message.safetyLevel}` : ""
+    ].filter(Boolean).join(" ");
+
+    const meta = document.createElement("span");
+    meta.className = "message__meta";
+    meta.textContent = message.role === "user" ? "你" : "See";
+
+    const body = document.createElement("p");
+    body.textContent = message.text;
+
+    article.append(meta, body);
+    messagesEl.append(article);
+  }
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function renderMemories() {
+  memoryListEl.innerHTML = "";
+  if (state.memories.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "聊几句后，我会把重要的人和事记在这里。";
+    memoryListEl.append(empty);
+    return;
+  }
+
+  for (const item of state.memories.slice(0, 8)) {
+    const row = document.createElement("div");
+    row.className = "memory-item";
+
+    const label = document.createElement("strong");
+    label.textContent = item.label;
+
+    const type = document.createElement("span");
+    type.textContent = memoryTypeLabel(item.type);
+
+    row.append(label, type);
+    memoryListEl.append(row);
+  }
+}
+
+function renderTopics() {
+  topicListEl.innerHTML = "";
+  const topics = buildTopics();
+  for (const topic of topics) {
+    const chip = document.createElement("button");
+    chip.className = "topic-chip";
+    chip.type = "button";
+    chip.textContent = topic;
+    chip.addEventListener("click", () => {
+      input.value = topic;
+      input.focus();
+    });
+    topicListEl.append(chip);
+  }
+}
+
+function renderCheckIn() {
+  state.checkIn = planCheckIn({
+    memories: state.memories,
+    lastMessageAt: latestUserMessageAt(),
+    now: new Date()
+  });
+  checkInButton.textContent = state.checkIn.text;
+}
+
+function buildTopics() {
+  const person = state.memories.find((item) => item.type === "person");
+  const interest = state.memories.find((item) => item.type === "interest");
+  const recent = state.memories.find((item) => item.type === "recent_event");
+  return [
+    person ? `想听你说说${person.label}` : "说说今天见到的人",
+    interest ? `继续聊聊${interest.label}` : "聊一件年轻时喜欢的事",
+    recent ? "把今天的小事慢慢说完" : "晚上想记住什么"
+  ];
+}
+
+function latestUserMessageAt() {
+  const latest = [...state.messages].reverse().find((message) => message.role === "user");
+  return latest?.createdAt || null;
+}
+
+function memoryTypeLabel(type) {
+  return {
+    person: "人和关系",
+    interest: "喜欢的事",
+    routine: "生活节奏",
+    food: "吃喝口味",
+    place: "熟悉地方",
+    story: "往事",
+    recent_event: "最近发生",
+    preference: "偏好",
+    concern: "牵挂"
+  }[type] || "记忆";
+}
+
+function createId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const text = input.value;
+  input.value = "";
+  handleUserText(text);
+});
+
+checkInButton.addEventListener("click", () => {
+  handleUserText(checkInButton.textContent);
+});
+
+resetButton.addEventListener("click", () => {
+  const confirmed = window.confirm("要清空这次体验里的聊天和记忆吗？");
+  if (!confirmed) return;
+  localStorage.removeItem(STORAGE_KEY);
+  const fresh = defaultState();
+  state.messages = fresh.messages;
+  state.memories = fresh.memories;
+  state.checkIn = fresh.checkIn;
+  saveState();
+  render();
+});
+
+render();
