@@ -31,6 +31,7 @@ test("styles use large readable text and responsive layout", async () => {
   assert.match(css, /\.app-shell/);
   assert.match(css, /\.privacy-actions/);
   assert.match(css, /\.storage-warning/);
+  assert.match(css, /\.storage-warning--info/);
   assert.match(css, /\.message--verify/);
   assert.match(css, /@media \(max-width:\s*860px\)/);
   assert.match(css, /:focus-visible/);
@@ -53,8 +54,14 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /trimHistoryButton/);
   assert.match(app, /storageWarning/);
   assert.match(app, /exportState/);
+  assert.match(app, /setStorageStatus/);
+  assert.match(app, /记录已导出/);
+  assert.match(app, /导入完成/);
+  assert.match(app, /已保留最近/);
   assert.match(app, /importState/);
   assert.match(app, /applyImportedState/);
+  assert.match(app, /if\s*\(\s*applyImportedState\(imported,\s*\{\s*mergeWithCurrent\s*\}\)\s*\)/);
+  assert.match(app, /if\s*\(\s*saveState\(\)\s*\)\s*\{\s*render\(\);\s*setStorageStatus\("已保留最近/s);
   assert.match(app, /mergeLocalDataStates/);
   assert.match(app, /new FileReader/);
   assert.match(app, /trimHistory/);

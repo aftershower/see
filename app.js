@@ -59,10 +59,10 @@ function loadState() {
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    setStorageWarning("");
+    setStorageStatus("");
     return true;
   } catch {
-    setStorageWarning("这台设备暂时没有保存新的聊天。你仍可以继续聊，稍后再试。");
+    setStorageStatus("这台设备暂时没有保存新的聊天。你仍可以继续聊，稍后再试。", "error");
     return false;
   }
 }
@@ -233,6 +233,7 @@ function exportState() {
   link.click();
   link.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  setStorageStatus("记录已导出。请在下载文件里查看。");
 }
 
 function importState(event) {
@@ -249,16 +250,17 @@ function importState(event) {
         if (!confirmed) return;
         mergeWithCurrent = true;
       }
-      applyImportedState(imported, { mergeWithCurrent });
-      setStorageWarning("");
+      if (applyImportedState(imported, { mergeWithCurrent })) {
+        setStorageStatus("导入完成。聊天和记忆已经更新。");
+      }
     } catch {
-      setStorageWarning("导入失败。请确认这是之前导出的 See JSON 文件。");
+      setStorageStatus("导入失败。请确认这是之前导出的 See JSON 文件。", "error");
     } finally {
       importInput.value = "";
     }
   });
   reader.addEventListener("error", () => {
-    setStorageWarning("导入失败。请稍后再试。");
+    setStorageStatus("导入失败。请稍后再试。", "error");
     importInput.value = "";
   });
   reader.readAsText(file);
@@ -275,23 +277,32 @@ function applyImportedState(imported, options = {}) {
   for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
     node.remove();
   }
-  saveState();
+  const saved = saveState();
   render();
+  return saved;
 }
 
 function trimHistory() {
-  if (state.messages.length <= MAX_RETAINED_MESSAGES) return;
+  if (state.messages.length <= MAX_RETAINED_MESSAGES) {
+    setStorageStatus("现在聊天不多，不需要清理。");
+    return;
+  }
   const confirmed = window.confirm("只保留最近 12 条聊天吗？长期记忆会继续保留。");
   if (!confirmed) return;
   state.messages = state.messages.slice(-MAX_RETAINED_MESSAGES);
   state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
-  saveState();
+  if (saveState()) {
+    render();
+    setStorageStatus("已保留最近 12 条聊天，长期记忆还在。");
+    return;
+  }
   render();
 }
 
-function setStorageWarning(message) {
+function setStorageStatus(message, tone = "info") {
   storageWarning.textContent = message;
   storageWarning.hidden = !message;
+  storageWarning.classList.toggle("storage-warning--info", Boolean(message) && tone === "info");
 }
 
 function renderTopics() {

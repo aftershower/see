@@ -255,6 +255,12 @@ h2 {
   font-size: 16px;
 }
 
+.storage-warning--info {
+  border-color: rgba(40, 111, 99, 0.24);
+  background: #f1f7f2;
+  color: var(--accent-deep);
+}
+
 .storage-warning[hidden] {
   display: none;
 }

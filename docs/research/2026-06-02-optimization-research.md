@@ -36,7 +36,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - The browser app now sends chats through `/api/chat` with a timeout and local fallback, keeping the UI aligned with the future AI-provider boundary.
 - The message stream now uses `role="log"`, announces additions only, and avoids rebuilding the entire live region on every render.
 - The local server now enforces POST+JSON for `/api/chat`, returns method/media-type errors, adds browser-hardening headers, and marks API responses `no-store`.
-- Users can now export local companion data as JSON, import a previous JSON export, trim old chat history while keeping long-term memory, and see a visible warning if browser storage fails.
+- Users can now export local companion data as JSON, import a previous JSON export, trim old chat history while keeping long-term memory, and see visible success or warning feedback for each privacy action.
 - Urgent and crisis replies now use locale-aware emergency resources, with the browser passing `navigator.language` through `/api/chat` and the local fallback.
 - Safety routing now also catches fake-agency app downloads, screen-sharing pressure, secrecy demands, suspicious links, identity-document coercion, and "not allowed to leave" abuse signals.
 - A validation protocol now defines pilot tasks and metrics for elder-reader usability, loneliness/support outcomes, privacy trust, caregiver consent boundaries, and safety false positive/false negative review.
