@@ -36,7 +36,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Urgent and crisis replies now use locale-aware emergency resources, with the browser passing `navigator.language` through `/api/chat` and the local fallback.
 - Safety routing now also catches fake-agency app downloads, screen-sharing pressure, secrecy demands, suspicious links, identity-document coercion, and "not allowed to leave" abuse signals.
 - A validation protocol now defines pilot tasks and metrics for elder-reader usability, loneliness/support outcomes, privacy trust, caregiver consent boundaries, and safety false positive/false negative review.
-- Local import restore now normalizes imported records and warns before an older export overwrites newer local conversations.
+- Local import restore now normalizes imported records and merges older exports with newer local conversations instead of replacing newer data.
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 - Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
 
@@ -55,4 +55,4 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 3. Strengthen local persistence:
    - consider IndexedDB for larger histories
    - define an iCloud/CloudKit migration path for a native iOS version
-   - add merge support for restoring exports without replacing newer local data
+   - define cross-device conflict behavior for future CloudKit sync

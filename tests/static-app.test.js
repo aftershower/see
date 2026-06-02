@@ -55,6 +55,7 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /exportState/);
   assert.match(app, /importState/);
   assert.match(app, /applyImportedState/);
+  assert.match(app, /mergeLocalDataStates/);
   assert.match(app, /new FileReader/);
   assert.match(app, /trimHistory/);
   assert.match(app, /URL\.createObjectURL/);

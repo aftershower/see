@@ -38,6 +38,62 @@ export function needsImportConflictConfirmation(currentState, imported) {
   return currentLatest > 0 && importedLatest > 0 && importedLatest < currentLatest;
 }
 
+export function mergeLocalDataStates(currentState = {}, importedState = {}) {
+  return {
+    messages: mergeMessages(currentState.messages || [], importedState.messages || []),
+    memories: mergeMemoryItems(currentState.memories || [], importedState.memories || []),
+    checkIn: currentState.checkIn || importedState.checkIn || null
+  };
+}
+
+function mergeMessages(currentMessages, importedMessages) {
+  const byKey = new Map();
+  for (const message of [...importedMessages, ...currentMessages]) {
+    if (!message || typeof message.text !== "string") continue;
+    byKey.set(messageKey(message), message);
+  }
+  return [...byKey.values()].sort((a, b) => timestamp(a.createdAt) - timestamp(b.createdAt));
+}
+
+function mergeMemoryItems(currentMemories, importedMemories) {
+  const byKey = new Map();
+  for (const item of [...importedMemories, ...currentMemories]) {
+    if (!item || typeof item.label !== "string" || typeof item.type !== "string") continue;
+    const key = `${item.type}:${String(item.label).trim().toLowerCase()}`;
+    const previous = byKey.get(key);
+    byKey.set(key, previous ? mergeMemoryItem(previous, item) : item);
+  }
+  return [...byKey.values()].sort((a, b) => String(a.type).localeCompare(String(b.type)));
+}
+
+function mergeMemoryItem(previous, next) {
+  const chosen = chooseNewerOrRicher(previous, next);
+  return {
+    ...chosen,
+    confidence: Math.max(previous.confidence || 0, next.confidence || 0),
+    updatedAt: latestDate(previous.updatedAt, next.updatedAt) || chosen.updatedAt
+  };
+}
+
+function chooseNewerOrRicher(previous, next) {
+  const previousUpdated = timestamp(previous.updatedAt);
+  const nextUpdated = timestamp(next.updatedAt);
+  if (nextUpdated > previousUpdated) return next;
+  if (previousUpdated > nextUpdated) return previous;
+  return String(next.detail || "").length > String(previous.detail || "").length ? next : previous;
+}
+
+function messageKey(message) {
+  return typeof message.id === "string" && message.id
+    ? message.id
+    : `${message.role}:${message.createdAt || ""}:${message.text}`;
+}
+
+function latestDate(a, b) {
+  const latest = Math.max(timestamp(a), timestamp(b));
+  return latest > 0 ? new Date(latest).toISOString() : null;
+}
+
 function latestTimestamp(messages) {
   return Math.max(0, ...messages.map((message) => timestamp(message?.createdAt)));
 }

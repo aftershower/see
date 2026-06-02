@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  mergeLocalDataStates,
   needsImportConflictConfirmation,
   normalizeImportedState
 } from "../src/local-data.js";
@@ -48,4 +49,34 @@ test("detects when an imported export is older than current local messages", () 
 
   assert.equal(needsImportConflictConfirmation(currentState, olderExport), true);
   assert.equal(needsImportConflictConfirmation(currentState, newerExport), false);
+});
+
+test("merges imported local data without replacing newer local messages", () => {
+  const currentState = {
+    messages: [
+      { id: "m-current", role: "user", text: "今天女儿来了", createdAt: "2026-06-02T12:00:00.000Z" }
+    ],
+    memories: [
+      { id: "person-xiaoling-current", type: "person", label: "小玲", detail: "女儿今天来过", confidence: 0.9, updatedAt: "2026-06-02T12:00:00.000Z" }
+    ],
+    checkIn: { text: "现在的问候", slot: "evening" }
+  };
+  const importedState = {
+    messages: [
+      { id: "m-old", role: "assistant", text: "早上好", createdAt: "2026-06-01T08:00:00.000Z" },
+      { id: "m-current", role: "user", text: "今天女儿来了", createdAt: "2026-06-02T12:00:00.000Z" }
+    ],
+    memories: [
+      { id: "person-xiaoling-old", type: "person", label: "小玲", detail: "女儿", confidence: 0.7, updatedAt: "2026-06-01T08:00:00.000Z" },
+      { id: "interest-opera", type: "interest", label: "听戏", detail: "喜欢听戏", confidence: 0.8 }
+    ],
+    checkIn: { text: "旧问候", slot: "morning" }
+  };
+
+  const merged = mergeLocalDataStates(currentState, importedState);
+
+  assert.deepEqual(merged.messages.map((message) => message.id), ["m-old", "m-current"]);
+  assert.equal(merged.memories.length, 2);
+  assert.equal(merged.memories.find((item) => item.type === "person").detail, "女儿今天来过");
+  assert.equal(merged.checkIn.text, "现在的问候");
 });

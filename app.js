@@ -4,6 +4,7 @@ import {
   planCheckIn
 } from "./src/companion-core.js";
 import {
+  mergeLocalDataStates,
   needsImportConflictConfirmation,
   normalizeImportedState
 } from "./src/local-data.js";
@@ -242,11 +243,13 @@ function importState(event) {
   reader.addEventListener("load", () => {
     try {
       const imported = JSON.parse(String(reader.result || "{}"));
+      let mergeWithCurrent = false;
       if (needsImportConflictConfirmation(state, imported)) {
-        const confirmed = window.confirm("导入的记录比当前聊天旧。继续导入会覆盖现在的聊天和记忆，要继续吗？");
+        const confirmed = window.confirm("导入的记录比当前聊天旧。继续导入会合并旧记录，不会删除现在的聊天和记忆，要继续吗？");
         if (!confirmed) return;
+        mergeWithCurrent = true;
       }
-      applyImportedState(imported);
+      applyImportedState(imported, { mergeWithCurrent });
       setStorageWarning("");
     } catch {
       setStorageWarning("导入失败。请确认这是之前导出的 See JSON 文件。");
@@ -261,12 +264,13 @@ function importState(event) {
   reader.readAsText(file);
 }
 
-function applyImportedState(imported) {
+function applyImportedState(imported, options = {}) {
   const importedState = normalizeImportedState(imported, { createId });
+  const nextState = options.mergeWithCurrent ? mergeLocalDataStates(state, importedState) : importedState;
 
-  state.messages = importedState.messages;
-  state.memories = importedState.memories;
-  state.checkIn = importedState.checkIn;
+  state.messages = nextState.messages;
+  state.memories = nextState.memories;
+  state.checkIn = nextState.checkIn;
   renderedMessageIds.clear();
   for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
     node.remove();
