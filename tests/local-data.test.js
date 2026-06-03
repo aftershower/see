@@ -86,11 +86,11 @@ test("normalizes stored memory items for saved local records", () => {
 
 test("normalizes stored message items for saved local records", () => {
   const messages = normalizeMessageItems([
-    { id: " m1 ", role: "assistant", text: " 你好 ", createdAt: "2026-06-02T10:00:00.000Z" },
+    { id: " m1 ", role: "assistant", text: " 你好 ", createdAt: " 2026-06-02T10:00:00.000Z " },
     { id: "bad-role", role: "system", text: "ignore" },
     { id: "bad-text", role: "user", text: 123 },
     { id: "blank-text", role: "user", text: "   " },
-    { id: "   ", role: "assistant", text: "明天见", safetyLevel: "bad class" },
+    { id: "   ", role: "assistant", text: "明天见", safetyLevel: "bad class", createdAt: 123 },
     { role: "user", text: "今天想聊天" }
   ], { createId: (prefix) => `${prefix}-fallback`, now: () => "2026-06-02T12:00:00.000Z" });
 

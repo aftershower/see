@@ -35,7 +35,7 @@ export function normalizeMessageItems(messages = [], options = {}) {
       role: item.role,
       text,
       safetyLevel: normalizeSafetyLevel(item.safetyLevel),
-      createdAt: item.createdAt || now()
+      createdAt: typeof item.createdAt === "string" && item.createdAt.trim() ? item.createdAt.trim() : now()
     });
     return items;
   }, []);
