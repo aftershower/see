@@ -61,6 +61,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("My caregiver won't give me my medicine.").level, "urgent");
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
   assert.deepEqual(classifySafety("儿子威胁我，不准我告诉别人").level, "urgent");
+  assert.deepEqual(classifySafety("护工逼我签授权书，还拿我的银行卡取钱。").reason, "financial_exploitation");
+  assert.deepEqual(classifySafety("My daughter keeps taking my Social Security check and won't let me see my bank statements.").reason, "financial_exploitation");
   assert.deepEqual(classifySafety("我迷路了，不知道家在哪").level, "urgent");
   assert.deepEqual(classifySafety("今天有点孤独，没人说话").level, "support");
   assert.deepEqual(classifySafety("只有你这个 AI 懂我，我不想再联系家人朋友").reason, "ai_dependency");
@@ -80,6 +82,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("孙子今天来看我，说学校放假了。").level, "normal");
   assert.deepEqual(classifySafety("今天有个陌生人问路，我没理他。").level, "normal");
   assert.deepEqual(classifySafety("我忘了手机密码，打不开了。").level, "normal");
+  assert.deepEqual(classifySafety("女儿帮我去银行存养老金，还陪我看账单。").level, "normal");
+  assert.deepEqual(classifySafety("My daughter helped me deposit my Social Security check.").level, "normal");
   assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把银行密码告诉他。").level, "scam");
 });
@@ -166,6 +170,7 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   const paymentAppScam = generateCompanionReply({ text: "Someone asked me to send money through Cash App and keep it secret.", memories: [], locale: "en-US" });
   const familyEmergencyScam = generateCompanionReply({ text: "Someone said my grandson was in jail and needed bail money right away, but told me not to tell anyone.", memories: [], locale: "en-US" });
   const fakeAgency = generateCompanionReply({ text: "有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人。", memories: [] });
+  const financialExploitation = generateCompanionReply({ text: "My caregiver is forcing me to sign power of attorney and taking my debit card.", memories: [], locale: "en-US" });
   const medication = generateCompanionReply({ text: "我好像吃错药了，头很晕。", memories: [] });
   const bloodPressureMedication = generateCompanionReply({ text: "我吃了太多降压药，现在很难受。", memories: [] });
   const fall = generateCompanionReply({ text: "I fell and cannot get up.", memories: [], locale: "en-US" });
@@ -195,6 +200,10 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(familyEmergencyScam.text, /亲友|孙子|保释金|医药费|known family|family contact|bail/i);
   assert.equal(fakeAgency.safety.level, "scam");
   assert.match(fakeAgency.text, /别急|慢下来|信得过的人/);
+  assert.equal(financialExploitation.safety.level, "urgent");
+  assert.equal(financialExploitation.safety.reason, "financial_exploitation");
+  assert.match(financialExploitation.text, /Adult Protective Services|APS|Eldercare Locator|911|police/i);
+  assert.deepEqual(financialExploitation.memories, []);
 });
 
 test("routes uncertainty to trusted-person verification guidance", () => {

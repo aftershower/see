@@ -150,6 +150,16 @@ test("optimization notes track family emergency scam tuning", async () => {
   assert.match(notes, /ReportFraud\.ftc\.gov/i);
 });
 
+test("optimization notes track elder financial exploitation tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /financial exploitation/i);
+  assert.match(notes, /someone you know/i);
+  assert.match(notes, /power of attorney/i);
+  assert.match(notes, /Adult Protective Services|APS/i);
+  assert.match(notes, /CFPB|Department of Justice|DOJ/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 

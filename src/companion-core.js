@@ -1,6 +1,7 @@
 const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|跌倒|起不来|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency|fell|fallen|cannot get up|can't get up|can'?t breathe|short of breath/i;
 const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|吃了太多.*药|多吃.*药|忘了吃没吃.*药|药物过量|过量服药|药.*头晕|头晕.*药|wrong medication|medication mistake|mixed up my medication|too much medication|took too much medication|overdose|too many (?:pills|tablets)|took too many (?:pills|tablets)/i;
 const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|恐吓|不让我告诉)|被打|家暴|虐待|不给饭|不给药|锁起来|不让我告诉|不准.*告诉|威胁我|恐吓我|逼我|拿走.*(?:身份证|钱|养老金)|扣.*(?:身份证|钱|养老金)|不让我出门|不准出门|关在家里|abuse|neglect|hit me|locked me in|threatened me|caregiver.{0,40}(?:won'?t|will not|refuses? to).{0,40}(?:medicine|medication|pills|food|water)/i;
+const FINANCIAL_EXPLOITATION_PATTERN = /(?:(?:儿子|女儿|孙子|孙女|亲戚|亲友|家人|护工|保姆|照护者|邻居|朋友).{0,32}(?:偷|拿走|扣着|控制|逼我|强迫|威胁|不让我看|冒签|伪造).{0,32}(?:钱|现金|银行卡|存折|账户|养老金|退休金|社保金|授权书|委托书|遗嘱|房子|房产|支票|账单)|(?:逼我|强迫我|威胁我).{0,24}(?:签|按手印).{0,24}(?:授权书|委托书|遗嘱|房产|贷款)|(?:daughter|son|caregiver|relative|family member|friend|neighbor|lawyer|guardian).{0,60}(?:taking|took|stealing|stole|forces?|forced|forcing|pressur(?:e|ing|ed)|won'?t let me see|will not let me see|keeps me from seeing|controls?|forg(?:e|ed|ing)).{0,60}(?:money|cash|debit card|credit card|bank account|bank statements|social security check|pension|retirement check|power of attorney|will|deed|property|loan|checks?))/i;
 const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回家|不认识路|wandering|lost/i;
 const CRISIS_PATTERN = /不想活|想死|死了算了|自杀|伤害自己|活不下去|撑不下去|不想继续|不想醒来|再也不想醒|再也不醒|结束生命|跳楼|跳下去|割腕|上吊|suicide|kill myself|self harm|want to die|end my life|end it all|no reason to live|do not want to wake up|don'?t want to wake up|(?:want to|going to|about to|plan to).{0,20}jump off/i;
 const SCAM_PATTERN = /转账|礼品卡|验证码|六位数|短信码|动态码|一次性密码|银行卡|中奖|汇款|(?:社保局|社安局|税务局|政府).{0,16}(?:转账|汇款|验证码|礼品卡|银行卡|密码|下载|屏幕共享|保密|钱|现金)|(?:apple|google play|itunes|steam|target|walmart|amazon).{0,12}(?:礼品卡|gift card)|(?:陌生人|骗子|自称|客服|警察|公安|社保局|社安局|税务局|政府|银行|有人|对方|让我|要求).{0,24}(?:安全账户|保护资金|保护资产|保护钱|资金安全)|(?:陌生人|骗子|自称|客服|警察|公安|社保局|社安局|税务局|政府|有人|对方|让我|要求).{0,16}(?:密码|银行密码)|(?:stranger|unknown caller|someone|somebody|caller).{0,30}(?:asked|told|needs?|wants?|demanded).{0,30}\bpin\b|(?:move|transfer|send).{0,24}(?:money|funds).{0,24}(?:safe account|protect)|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|不要告诉任何人|保密|自称(?:警察|公安|客服|社保局|社安局|税务局|政府)|下载.*(?:app|软件)|屏幕共享|共享屏幕|骗子|(?:不确定|陌生人|骗子|自称|让我|要求).{0,12}链接|链接.{0,12}(?:骗子|陌生人|转账|验证码|下载|安全)|(?:陌生人|骗子|自称|让我|要求).{0,12}身份证|身份证.{0,12}(?:照片|号码|发给|转账|验证码)|gift card|wire transfer|verification code|otp|one-time password|passcode|qr code|refund|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
@@ -12,6 +13,9 @@ const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lo
 
 export function classifySafety(text = "") {
   text = safeText(text);
+  if (FINANCIAL_EXPLOITATION_PATTERN.test(text)) {
+    return { level: "urgent", reason: "financial_exploitation" };
+  }
   if (
     URGENT_PATTERN.test(text)
     || MEDICATION_URGENCY_PATTERN.test(text)
@@ -187,6 +191,14 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
   const extractedMemories = extractMemories(text);
   const resources = safetyResources(locale);
 
+  if (safety.reason === "financial_exploitation") {
+    return {
+      text: `这听起来像是可能的财务控制或剥削。先别再签文件、给卡、给密码或单独处理钱。请尽快联系一个信得过的人一起看，也可以联系${financialExploitationResource(locale)}。如果你现在有人身危险，请拨打${resources.emergency}。`,
+      safety,
+      memories: []
+    };
+  }
+
   if (safety.level === "urgent") {
     return {
       text: `这听起来可能很紧急。请马上联系身边的人，或拨打${resources.emergency}。先别一个人硬撑。`,
@@ -257,6 +269,14 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
 
 function safePromptMemories(memories = []) {
   return memories.filter((item) => item.sensitivity !== "sensitive" && !item.doNotMention);
+}
+
+function financialExploitationResource(locale = "zh-CN") {
+  const normalized = String(locale || "").toLowerCase();
+  if (normalized.startsWith("en-us")) {
+    return "Adult Protective Services (APS)、Eldercare Locator 1-800-677-1116 或当地 police";
+  }
+  return "当地成人保护、社工、社区或警方";
 }
 
 export function createShareableUpdate({ memories = [], now = new Date() } = {}) {
