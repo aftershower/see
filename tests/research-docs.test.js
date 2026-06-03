@@ -111,6 +111,8 @@ test("optimization notes track automatic raw chat retention cap", async () => {
   assert.match(notes, /automatic raw chat retention cap/i);
   assert.match(notes, /most recent 12 messages/i);
   assert.match(notes, /loaded legacy localStorage records/i);
+  assert.match(notes, /initializes the retention limit before loading/i);
+  assert.match(notes, /writes pruned legacy records back/i);
 });
 
 test("optimization notes track scam false-positive tuning", async () => {

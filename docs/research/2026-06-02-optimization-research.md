@@ -67,6 +67,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - `/api/chat` now also enforces the same minimization server-side: it accepts a maximum of 8 valid non-sensitive memory items and strips each item down to type and label only before generating a reply, matching the OWASP API Security Top 10 guidance to avoid over-broad object properties at API boundaries.
 - Deleted-memory tombstones are exported, imported, and used during local merge so older imports cannot resurrect deleted memories.
 - An automatic raw chat retention cap keeps only the most recent 12 messages while long-term memory remains separate, including loaded legacy localStorage records.
+- The browser now initializes the retention limit before loading saved state and writes pruned legacy records back on open, so old localStorage chat history is not silently restored or left untrimmed at rest.
 - Scam false-positive tuning now avoids a shopping false positive from bare `pin` matching and avoids flagging routine government or benefits-office visits without payment/code pressure.
 
 ## Next Optimization Backlog

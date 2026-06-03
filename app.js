@@ -11,6 +11,8 @@ import {
 } from "./src/local-data.js";
 
 const STORAGE_KEY = "see.elderCompanion.v1";
+const MAX_RETAINED_MESSAGES = 12;
+let shouldPersistLoadedState = false;
 const state = loadState();
 
 const messagesEl = document.querySelector("#messages");
@@ -29,7 +31,6 @@ const copyUpdateButton = document.querySelector("#copyUpdateButton");
 const shareUpdateText = document.querySelector("#shareUpdateText");
 const storageWarning = document.querySelector("#storageWarning");
 const renderedMessageIds = new Set();
-const MAX_RETAINED_MESSAGES = 12;
 
 function defaultState() {
   return {
@@ -52,8 +53,12 @@ function loadState() {
     if (!saved) return defaultState();
     const parsed = JSON.parse(saved);
     const messages = Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages;
+    const retained = retainedMessages(messages);
+    if (retained.length !== messages.length) {
+      shouldPersistLoadedState = true;
+    }
     return {
-      messages: retainedMessages(messages),
+      messages: retained,
       memories: Array.isArray(parsed.memories) ? parsed.memories : [],
       deletedMemoryKeys: normalizeDeletedMemoryKeys(parsed.deletedMemoryKeys),
       checkIn: parsed.checkIn || null
@@ -483,4 +488,7 @@ resetButton.addEventListener("click", () => {
   clearShareDraft(saved);
 });
 
+if (shouldPersistLoadedState) {
+  saveState();
+}
 render();

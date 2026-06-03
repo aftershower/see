@@ -54,7 +54,8 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /localStorage/);
   assert.match(app, /pruneRetainedMessages/);
   assert.match(app, /retainedMessages/);
-  assert.match(app, /messages:\s*retainedMessages\(/);
+  assert.match(app, /const retained\s*=\s*retainedMessages\(messages\)/);
+  assert.match(app, /messages:\s*retained/);
   assert.match(app, /function saveState[\s\S]*pruneRetainedMessages\(\)/);
   assert.match(app, /function retainedMessages[\s\S]*messages\.slice\(-MAX_RETAINED_MESSAGES\)/);
   assert.match(app, /checkInButton/);
@@ -106,6 +107,18 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /function applyImportedState[\s\S]*clearShareDraft/);
   assert.match(app, /resetButton\.addEventListener[\s\S]*clearShareDraft/);
   assert.match(app, /data-memory-id/);
+});
+
+test("browser app initializes retention before loading and persists pruned legacy history", async () => {
+  const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
+
+  assert.ok(
+    app.indexOf("const MAX_RETAINED_MESSAGES") < app.indexOf("const state = loadState();"),
+    "retention limit must be initialized before loadState reads saved messages"
+  );
+  assert.match(app, /let shouldPersistLoadedState\s*=\s*false/);
+  assert.match(app, /shouldPersistLoadedState\s*=\s*true/);
+  assert.match(app, /if\s*\(\s*shouldPersistLoadedState\s*\)\s*\{\s*saveState\(\);\s*\}/);
 });
 
 test("manifest defines installable app identity", async () => {
