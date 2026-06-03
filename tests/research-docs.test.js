@@ -180,6 +180,16 @@ test("optimization notes track prize scam tuning", async () => {
   assert.match(notes, /FTC/i);
 });
 
+test("optimization notes track Medicare identity scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /Medicare number/i);
+  assert.match(notes, /free.*brace|medical equipment/i);
+  assert.match(notes, /DNA|genetic/i);
+  assert.match(notes, /1-800-MEDICARE|ReportFraud\.ftc\.gov/i);
+  assert.match(notes, /FTC|Medicare\.gov/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
