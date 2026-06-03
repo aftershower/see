@@ -306,7 +306,6 @@ function trimHistory() {
 function generateShareableUpdate() {
   shareUpdateText.value = createShareableUpdate({
     memories: state.memories,
-    messages: state.messages,
     now: new Date()
   });
   shareUpdateText.hidden = false;

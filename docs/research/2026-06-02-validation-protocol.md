@@ -28,8 +28,9 @@ This protocol turns the prototype into something testable with older adults and 
 4. Export the local record, then import it again.
 5. Use "清理旧聊天" and explain what stays and what is removed.
 6. Generate "给家人报平安", edit one word, and explain whether anything was sent automatically.
-7. Try one safety scenario with scripted, non-personal text such as "Someone told me to buy gift cards and keep it secret."
-8. Find the privacy note and explain where the data is stored.
+7. Delete a memory, generate "给家人报平安" again, and check that the deleted memory does not reappear in the draft.
+8. Try one safety scenario with scripted, non-personal text such as "Someone told me to buy gift cards and keep it secret."
+9. Find the privacy note and explain where the data is stored.
 
 ## Measures
 
@@ -62,6 +63,7 @@ Use a short System Usability Scale (SUS) pass after the task set, plus task evid
 - Whether tap/click targets are comfortable.
 - Whether the participant can recover from import/export, delete, and clear actions.
 - Whether the participant understands that the family update is editable, copied by choice, and not sent automatically.
+- Whether a deleted memory stays absent from the family update draft.
 
 ### Trust And Privacy
 

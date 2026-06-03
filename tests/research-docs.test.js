@@ -13,6 +13,7 @@ test("validation protocol defines elder companion pilot measures", async () => {
   assert.match(protocol, /caregiver/i);
   assert.match(protocol, /给家人报平安/);
   assert.match(protocol, /not sent automatically/i);
+  assert.match(protocol, /deleted memory does not reappear/i);
   assert.match(protocol, /false positive/i);
   assert.match(protocol, /false negative/i);
   assert.match(protocol, /scam/i);
@@ -25,6 +26,7 @@ test("README links the validation protocol", async () => {
   assert.match(readme, /2026-06-02-validation-protocol\.md/);
   assert.match(readme, /replacement for real relationships/i);
   assert.match(readme, /trusted person/i);
+  assert.match(readme, /deleted memory should not resurface/i);
 });
 
 test("storage migration notes define PWA and native persistence boundaries", async () => {

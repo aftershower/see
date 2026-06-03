@@ -4,6 +4,7 @@
 
 - NYSOFA's 2026 ElliQ update reports older-adult engagement and loneliness outcomes: average client age 75, 41 interactions per day, 4.6/5 satisfaction, 94% saying they feel less lonely, and 97% reporting they feel better overall. Source: https://aging.ny.gov/system/files/documents/2026/02/nysofa-elliq-project-update-2026.pdf
 - AARP's 2026 technology trends survey says privacy, trust, and data security are major barriers for older adults considering AI tools, and that many adults 50+ do not feel technology is designed with their age in mind. Source: https://www.aarp.org/pri/topics/technology/internet-media-devices/2026-technology-trends-older-adults/
+- NIST's Privacy Framework describes privacy risk management around data processing, including how individuals can understand and exercise choices about data collection, use, retention, disclosure, and deletion. Source: https://www.nist.gov/privacy-framework
 - WHO frames loneliness and social isolation among older people as public-health concerns and notes that digital and face-to-face interventions can help when they strengthen social connection. Source: https://www.who.int/activities/reducing-social-isolation-and-loneliness-among-older-people
 - NIH/NIA guidance emphasizes staying connected with family, friends, shared interests, activities, and community; it also distinguishes loneliness from social isolation. Source: https://magazine.medlineplus.gov/article/stay-connected-tips-from-the-national-institute-on-aging-for-combating-social-isolation-and-loneliness/
 - WCAG 2.2 adds guidance relevant to older users, including target size, visible focus, and support for low-vision, cognitive, and mobile accessibility. Source: https://www.w3.org/TR/WCAG22/
@@ -55,6 +56,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 - A new "给家人报平安" flow creates a local, editable, user-copied update instead of a caregiver dashboard or automatic send. It rechecks candidate messages with safety routing and excludes urgent, crisis, scam, verify, support, sensitive, and "do not mention" content.
 - AI-dependency language now routes to a support response that validates the feeling, says See cannot replace family or friends, suggests one small trusted-person contact, and avoids saving that dependency disclosure as memory.
+- Family update drafts now use only the current non-sensitive memory list, not raw chat text, so deleting a memory prevents it from resurfacing in a share draft.
 
 ## Next Optimization Backlog
 
@@ -67,6 +69,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - run the validation protocol with 5 to 8 older adults
    - convert observed blockers into product changes
    - test whether older adults understand that "给家人报平安" is editable, copied by choice, and not sent automatically
+   - test whether deleted memories stay absent from "给家人报平安" drafts
    - add scripted AI-dependency prompts to check that See nudges toward human connection without shaming the user
 
 3. Strengthen local persistence:

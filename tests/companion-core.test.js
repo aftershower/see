@@ -250,3 +250,18 @@ test("creates an older-adult controlled shareable update without sensitive or sa
   assert.match(update, /没有自动发送/);
   assert.doesNotMatch(update, /礼品卡|诈骗|陌生人|孤独|没人说话|验证码|老张/);
 });
+
+test("does not resurface deleted memories from older chat text in shareable updates", () => {
+  const update = createShareableUpdate({
+    memories: [
+      { type: "interest", label: "包饺子", detail: "喜欢包饺子" }
+    ],
+    messages: [
+      { role: "user", text: "今天小玲来看我，我们包了饺子。", safetyLevel: "normal", createdAt: "2026-06-02T09:00:00.000Z" }
+    ],
+    now: new Date("2026-06-02T12:00:00.000Z")
+  });
+
+  assert.match(update, /包饺子/);
+  assert.doesNotMatch(update, /小玲|来看我/);
+});
