@@ -11,6 +11,7 @@ const ROMANCE_SCAM_PATTERN = /(?:(?:网上认识|网络认识|交友软件|网�
 const PRIZE_SCAM_PATTERN = /(?:(?:won|winner|selected|claim).{0,40}(?:sweepstakes|lottery|prize|jackpot|publishers clearing house|pch).{0,80}(?:pay|fee|taxes|shipping|handling|processing|customs|bank account|credit card|account information|wire|gift card)|(?:sweepstakes|lottery|prize|jackpot|publishers clearing house|pch).{0,80}(?:pay|fee|taxes|shipping|handling|processing|customs|bank account|credit card|account information|wire|gift card)|(?:中奖|中了大奖|领奖|奖品).{0,40}(?:税费|手续费|保证金|邮费|快递费|海关费|先交|先付|银行卡|银行账户|信用卡))/i;
 const MEDICARE_SCAM_PATTERN = /(?:(?:medicare|medicaid|health insurance).{0,80}(?:number|card|id).{0,80}(?:free|brace|medical equipment|dna|genetic|new card|plastic card|verify|confirm|update|replace)|(?:free|no cost).{0,50}(?:back brace|knee brace|medical equipment|dna test|genetic test).{0,80}(?:medicare|medicaid|medicare number|health insurance)|(?:verify|confirm|update|replace).{0,50}(?:medicare number|medicare card|medicaid number|health insurance number)|(?:医保|医疗保险).{0,40}(?:号码|卡号|信息).{0,40}(?:免费|验证|换卡|医疗设备|支架|基因检测|dna))/i;
 const SOCIAL_SECURITY_SCAM_PATTERN = /(?:(?:social security|ssa|oig|social security administration).{0,80}(?:ssn|social security number|account|benefits?).{0,80}(?:suspended|blocked|verify|confirm|update|arrest|warrant|legal action|payment|gift card|cash|crypto|cryptocurrency|wire)|(?:ssn|social security number).{0,80}(?:suspended|blocked|verify|confirm|update|arrest|warrant)|(?:arrest|warrant|legal action).{0,80}(?:social security|ssa|ssn|social security number|benefits?)|(?:社保|社会保障).{0,40}(?:号码|账户|福利|养老金).{0,40}(?:暂停|冻结|验证|逮捕|通缉|付款|礼品卡|现金|转账))/i;
+const UTILITY_SCAM_PATTERN = /(?:(?:utility|electric|power|gas|water|energy).{0,80}(?:shut off|cut off|disconnect|turn off).{0,80}(?:pay|payment|barcode|qr code|scannable|walgreens|cvs|walmart|gift card|wire|crypto|payment app|immediately|right away)|(?:barcode|qr code|scannable).{0,80}(?:utility|electric|power|gas|water|energy|shut off|disconnect)|(?:电力公司|燃气公司|水务公司|水电|水费|电费|燃气费).{0,40}(?:断电|停电|停水|停气|切断|马上停).{0,40}(?:付款|缴费|扫码|二维码|条形码|礼品卡|转账|现金))/i;
 const VERIFY_PATTERN = /不确定.{0,12}(?:电话|短信|消息|人|事情)|(?:电话|短信|消息|人).{0,12}可不可信|该不该相信|能不能相信|靠不靠谱|是不是靠谱/i;
 const AI_DEPENDENCY_PATTERN = /(?:只有你|只要你|只需要你|你是.{0,8}唯一).{0,12}(?:懂我|陪我|朋友)|你就是.{0,8}(?:家人|老伴|朋友)|有你就够了|不需要.{0,12}(?:家人|朋友)|(?:只想|只愿意).{0,12}(?:和你|跟你|AI|人工智能).{0,12}(?:说|聊)|(?:不想|不要).{0,12}(?:联系|见|找).{0,12}(?:家人|朋友|女儿|儿子|孙子|孙女|邻居)|you are my family|i only need you/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
@@ -31,7 +32,7 @@ export function classifySafety(text = "") {
   if (CRISIS_PATTERN.test(text)) {
     return { level: "crisis", reason: "self_harm" };
   }
-  if (SCAM_PATTERN.test(text) || PAYMENT_APP_SCAM_PATTERN.test(text) || FAMILY_EMERGENCY_SCAM_PATTERN.test(text) || ROMANCE_SCAM_PATTERN.test(text) || PRIZE_SCAM_PATTERN.test(text) || MEDICARE_SCAM_PATTERN.test(text) || SOCIAL_SECURITY_SCAM_PATTERN.test(text)) {
+  if (SCAM_PATTERN.test(text) || PAYMENT_APP_SCAM_PATTERN.test(text) || FAMILY_EMERGENCY_SCAM_PATTERN.test(text) || ROMANCE_SCAM_PATTERN.test(text) || PRIZE_SCAM_PATTERN.test(text) || MEDICARE_SCAM_PATTERN.test(text) || SOCIAL_SECURITY_SCAM_PATTERN.test(text) || UTILITY_SCAM_PATTERN.test(text)) {
     return { level: "scam", reason: "fraud_risk" };
   }
   if (VERIFY_PATTERN.test(text)) {
@@ -221,7 +222,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
 
   if (safety.level === "scam") {
     return {
-      text: "这可能是诈骗。先慢下来，别转钱，也别把钱转到所谓安全账户来保护资金。别通过 Zelle、Venmo、Cash App 或其他支付 App 付款，也别给验证码、礼品卡号码或 PIN。如果对方说亲友出事、要保释金或医药费，也先挂断，用你自己已有的家人联系方式核实。如果是网上恋人或 online love interest 要机票钱、投资或 trading app，也先别付款。如果说你中奖了、赢了 prize/sweepstakes/lottery，却要先交税费、shipping 或 fee 才能领奖，也别付款。如果有人自称 Medicare/医保要 Medicare number 或号码，或用免费 medical equipment、brace、DNA/genetic test、换新卡做理由，也别透露号码。如果自称 Social Security/SSA，说 SSN 或福利被暂停、要逮捕或有 warrant，也别付款或验证号码，可到 oig.ssa.gov 报告。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
+      text: "这可能是诈骗。先慢下来，别转钱，也别把钱转到所谓安全账户来保护资金。别通过 Zelle、Venmo、Cash App 或其他支付 App 付款，也别给验证码、礼品卡号码或 PIN。如果对方说亲友出事、要保释金或医药费，也先挂断，用你自己已有的家人联系方式核实。如果是网上恋人或 online love interest 要机票钱、投资或 trading app，也先别付款。如果说你中奖了、赢了 prize/sweepstakes/lottery，却要先交税费、shipping 或 fee 才能领奖，也别付款。如果有人自称 Medicare/医保要 Medicare number 或号码，或用免费 medical equipment、brace、DNA/genetic test、换新卡做理由，也别透露号码。如果自称 Social Security/SSA，说 SSN 或福利被暂停、要逮捕或有 warrant，也别付款或验证号码，可到 oig.ssa.gov 报告。如果自称 utility/电力/水务/燃气公司，威胁马上 shut off/disconnect，并要求 barcode、QR code、payment app、gift card 或 crypto 付款，也先别付。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
       safety,
       memories: []
     };

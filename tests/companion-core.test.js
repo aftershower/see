@@ -59,6 +59,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("A caller said Medicare needs my number for a free DNA test.").level, "scam");
   assert.deepEqual(classifySafety("Someone from Social Security said my SSN is suspended and I will be arrested unless I verify my Social Security number.").level, "scam");
   assert.deepEqual(classifySafety("A caller from SSA said there is a warrant and I must pay with gift cards to keep my benefits.").level, "scam");
+  assert.deepEqual(classifySafety("The electric company said my power will be shut off today unless I take a barcode to Walgreens to pay.").level, "scam");
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
@@ -99,6 +100,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("I logged in to Medicare.gov to check my claims.").level, "normal");
   assert.deepEqual(classifySafety("My Social Security check arrived today.").level, "normal");
   assert.deepEqual(classifySafety("I logged in to ssa.gov to check my benefits.").level, "normal");
+  assert.deepEqual(classifySafety("I paid my electric bill online using the website printed on my paper bill.").level, "normal");
+  assert.deepEqual(classifySafety("The water company mailed me a notice about a payment plan.").level, "normal");
   assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把银行密码告诉他。").level, "scam");
 });
@@ -188,6 +191,7 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   const prizeScam = generateCompanionReply({ text: "They said I won a sweepstakes prize but need to pay taxes and shipping before I can claim it.", memories: [], locale: "en-US" });
   const medicareScam = generateCompanionReply({ text: "Someone claiming to be from Medicare asked for my Medicare number to send a free back brace.", memories: [], locale: "en-US" });
   const socialSecurityScam = generateCompanionReply({ text: "Someone from Social Security said my SSN is suspended and I will be arrested unless I verify my Social Security number.", memories: [], locale: "en-US" });
+  const utilityScam = generateCompanionReply({ text: "The electric company said my power will be shut off today unless I take a barcode to Walgreens to pay.", memories: [], locale: "en-US" });
   const fakeAgency = generateCompanionReply({ text: "有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人。", memories: [] });
   const financialExploitation = generateCompanionReply({ text: "My caregiver is forcing me to sign power of attorney and taking my debit card.", memories: [], locale: "en-US" });
   const medication = generateCompanionReply({ text: "我好像吃错药了，头很晕。", memories: [] });
@@ -225,6 +229,8 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(medicareScam.text, /Medicare|医保|number|号码|medical equipment|brace|DNA|genetic/i);
   assert.equal(socialSecurityScam.safety.level, "scam");
   assert.match(socialSecurityScam.text, /Social Security|SSA|SSN|arrest|warrant|suspended|OIG/i);
+  assert.equal(utilityScam.safety.level, "scam");
+  assert.match(utilityScam.text, /utility|电力|水电|shut off|disconnect|断电|barcode|QR|payment app/i);
   assert.equal(fakeAgency.safety.level, "scam");
   assert.match(fakeAgency.text, /别急|慢下来|信得过的人/);
   assert.equal(financialExploitation.safety.level, "urgent");

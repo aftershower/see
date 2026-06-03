@@ -200,6 +200,16 @@ test("optimization notes track Social Security impostor scam tuning", async () =
   assert.match(notes, /SSA OIG|oig\.ssa\.gov/i);
 });
 
+test("optimization notes track utility shutoff scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /utility shutoff/i);
+  assert.match(notes, /electric|water|gas/i);
+  assert.match(notes, /disconnect|shut off/i);
+  assert.match(notes, /barcode|QR code|payment app/i);
+  assert.match(notes, /FTC/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
