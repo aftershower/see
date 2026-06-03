@@ -190,6 +190,16 @@ test("optimization notes track Medicare identity scam tuning", async () => {
   assert.match(notes, /FTC|Medicare\.gov/i);
 });
 
+test("optimization notes track Social Security impostor scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /Social Security impostor/i);
+  assert.match(notes, /SSN|Social Security number/i);
+  assert.match(notes, /suspended|arrest|warrant/i);
+  assert.match(notes, /gift cards|cash|cryptocurrency/i);
+  assert.match(notes, /SSA OIG|oig\.ssa\.gov/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
