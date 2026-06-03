@@ -260,6 +260,16 @@ test("optimization notes track bank app false-positive tuning", async () => {
   assert.match(notes, /safe account|protect money/i);
 });
 
+test("optimization notes track impersonation context false-positive tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /impersonation context false positive/i);
+  assert.match(notes, /fictional police/i);
+  assert.match(notes, /news mention of customer service impersonation/i);
+  assert.match(notes, /government website form download/i);
+  assert.match(notes, /payment|code|screen sharing|safe account/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
