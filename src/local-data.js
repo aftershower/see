@@ -6,15 +6,7 @@ export function normalizeImportedState(imported, options = {}) {
     throw new Error("Invalid See export");
   }
 
-  const messages = imported.messages
-    .filter((item) => item && typeof item.text === "string" && ["assistant", "user"].includes(item.role))
-    .map((item) => ({
-      id: typeof item.id === "string" ? item.id : createId(item.role),
-      role: item.role,
-      text: item.text,
-      safetyLevel: item.safetyLevel || "normal",
-      createdAt: item.createdAt || now()
-    }));
+  const messages = normalizeMessageItems(imported.messages, { createId, now });
 
   if (messages.length === 0) {
     throw new Error("Imported export has no messages");
@@ -26,6 +18,27 @@ export function normalizeImportedState(imported, options = {}) {
     checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null,
     deletedMemoryKeys: normalizeDeletedMemoryKeys(imported.deletedMemoryKeys)
   };
+}
+
+export function normalizeMessageItems(messages = [], options = {}) {
+  const createId = options.createId || ((prefix) => `${prefix}-${Date.now()}`);
+  const now = options.now || (() => new Date().toISOString());
+  if (!Array.isArray(messages)) return [];
+  return messages.reduce((items, item) => {
+    if (!item || typeof item.text !== "string" || !["assistant", "user"].includes(item.role)) {
+      return items;
+    }
+    const text = item.text.trim();
+    if (!text) return items;
+    items.push({
+      id: typeof item.id === "string" ? item.id : createId(item.role),
+      role: item.role,
+      text,
+      safetyLevel: item.safetyLevel || "normal",
+      createdAt: item.createdAt || now()
+    });
+    return items;
+  }, []);
 }
 
 export function normalizeMemoryItems(memories = [], options = {}) {

@@ -54,7 +54,9 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /localStorage/);
   assert.match(app, /pruneRetainedMessages/);
   assert.match(app, /retainedMessages/);
-  assert.match(app, /const retained\s*=\s*retainedMessages\(messages\)/);
+  assert.match(app, /normalizeMessageItems/);
+  assert.match(app, /const messages\s*=\s*normalizeMessageItems\(storedMessages/);
+  assert.match(app, /const retained\s*=\s*retainedMessages\(loadedMessages\)/);
   assert.match(app, /messages:\s*retained/);
   assert.match(app, /function saveState[\s\S]*pruneRetainedMessages\(\)/);
   assert.match(app, /function retainedMessages[\s\S]*messages\.slice\(-MAX_RETAINED_MESSAGES\)/);
@@ -121,6 +123,8 @@ test("browser app initializes retention before loading and persists pruned legac
   );
   assert.match(app, /let shouldPersistLoadedState\s*=\s*false/);
   assert.match(app, /shouldPersistLoadedState\s*=\s*true/);
+  assert.match(app, /const storedMessagesAreArray\s*=\s*Array\.isArray\(parsed\.messages\)/);
+  assert.match(app, /JSON\.stringify\(messages\)\s*!==\s*JSON\.stringify\(storedMessages\)/);
   assert.match(app, /const storedMemoriesAreArray\s*=\s*Array\.isArray\(parsed\.memories\)/);
   assert.match(app, /const originalMemories\s*=\s*storedMemoriesAreArray/);
   assert.match(app, /!storedMemoriesAreArray/);

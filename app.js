@@ -7,6 +7,7 @@ import {
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeMessageItems,
   normalizeMemoryItems,
   normalizeImportedState
 } from "./src/local-data.js";
@@ -53,12 +54,22 @@ function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return defaultState();
     const parsed = JSON.parse(saved);
-    const messages = Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages;
-    const retained = retainedMessages(messages);
+    const storedMessagesAreArray = Array.isArray(parsed.messages);
+    const storedMessages = storedMessagesAreArray ? parsed.messages : [];
+    const messages = normalizeMessageItems(storedMessages, { createId });
+    const loadedMessages = messages.length > 0 ? messages : defaultState().messages;
+    const retained = retainedMessages(loadedMessages);
     const storedMemoriesAreArray = Array.isArray(parsed.memories);
     const originalMemories = storedMemoriesAreArray ? parsed.memories : [];
     const memories = normalizeMemoryItems(originalMemories, { createId });
-    if (retained.length !== messages.length || !storedMemoriesAreArray || JSON.stringify(memories) !== JSON.stringify(originalMemories)) {
+    if (
+      !storedMessagesAreArray
+      || messages.length === 0
+      || retained.length !== messages.length
+      || JSON.stringify(messages) !== JSON.stringify(storedMessages)
+      || !storedMemoriesAreArray
+      || JSON.stringify(memories) !== JSON.stringify(originalMemories)
+    ) {
       shouldPersistLoadedState = true;
     }
     return {

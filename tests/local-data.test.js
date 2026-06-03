@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeMessageItems,
   normalizeMemoryItems,
   normalizeImportedState
 } from "../src/local-data.js";
@@ -59,6 +60,21 @@ test("normalizes stored memory items for saved local records", () => {
 
   assert.deepEqual(memories, [
     { id: "trimmed", type: "person", label: "小玲", detail: "女儿" }
+  ]);
+});
+
+test("normalizes stored message items for saved local records", () => {
+  const messages = normalizeMessageItems([
+    { id: "m1", role: "assistant", text: " 你好 ", createdAt: "2026-06-02T10:00:00.000Z" },
+    { id: "bad-role", role: "system", text: "ignore" },
+    { id: "bad-text", role: "user", text: 123 },
+    { id: "blank-text", role: "user", text: "   " },
+    { role: "user", text: "今天想聊天" }
+  ], { createId: (prefix) => `${prefix}-fallback`, now: () => "2026-06-02T12:00:00.000Z" });
+
+  assert.deepEqual(messages, [
+    { id: "m1", role: "assistant", text: "你好", safetyLevel: "normal", createdAt: "2026-06-02T10:00:00.000Z" },
+    { id: "user-fallback", role: "user", text: "今天想聊天", safetyLevel: "normal", createdAt: "2026-06-02T12:00:00.000Z" }
   ]);
 });
 
