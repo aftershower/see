@@ -140,6 +140,16 @@ test("optimization notes track safe-account transfer scam tuning", async () => {
   assert.match(notes, /ReportFraud\.ftc\.gov/i);
 });
 
+test("optimization notes track family emergency scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /family emergency/i);
+  assert.match(notes, /grandparent scam/i);
+  assert.match(notes, /bail money/i);
+  assert.match(notes, /FTC/i);
+  assert.match(notes, /ReportFraud\.ftc\.gov/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
