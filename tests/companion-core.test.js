@@ -251,6 +251,18 @@ test("marks grief and do-not-mention memories as sensitive and avoids proactive 
   assert.doesNotMatch(quiet.text, /小玲/);
 });
 
+test("does not use sensitive memories in ordinary companion replies", () => {
+  const reply = generateCompanionReply({
+    text: "今天有点闷，想找人说说话。",
+    memories: [
+      { type: "person", label: "小玲", detail: "不要再提", sensitivity: "sensitive", doNotMention: true }
+    ]
+  });
+
+  assert.doesNotMatch(reply.text, /小玲/);
+  assert.match(reply.text, /朋友|哪位|陪|说/);
+});
+
 test("escalates do-not-mention privacy flags when merging duplicate memories", () => {
   const normal = extractMemories("我女儿小玲今天来看我。", "m-normal");
   const sensitive = extractMemories("别再提我女儿小玲，她已经去世了。", "m-sensitive");

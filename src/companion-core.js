@@ -121,9 +121,10 @@ export function mergeMemories(existing = [], incoming = []) {
 export function planCheckIn({ now = new Date(), lastMessageAt = null, memories = [] } = {}) {
   const hour = now.getHours();
   const quietHours = lastMessageAt ? (now.getTime() - new Date(lastMessageAt).getTime()) / 36e5 : 999;
-  const routine = memories.find((item) => item.type === "routine");
-  const interest = memories.find((item) => item.type === "interest");
-  const person = memories.find((item) => item.type === "person" && item.sensitivity !== "sensitive" && !item.doNotMention);
+  const promptMemories = safePromptMemories(memories);
+  const routine = promptMemories.find((item) => item.type === "routine");
+  const interest = promptMemories.find((item) => item.type === "interest");
+  const person = promptMemories.find((item) => item.type === "person");
   const createdAt = now.toISOString();
 
   if (hour < 11) {
@@ -225,7 +226,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
     };
   }
 
-  const context = [...extractedMemories, ...memories];
+  const context = [...safePromptMemories(extractedMemories), ...safePromptMemories(memories)];
   const person = context.find((item) => item.type === "person");
   const interest = context.find((item) => item.type === "interest");
   let reply;
@@ -248,6 +249,10 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
     memories: extractedMemories,
     checkIn: planCheckIn({ now, memories })
   };
+}
+
+function safePromptMemories(memories = []) {
+  return memories.filter((item) => item.sensitivity !== "sensitive" && !item.doNotMention);
 }
 
 export function createShareableUpdate({ memories = [], now = new Date() } = {}) {

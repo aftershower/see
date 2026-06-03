@@ -80,6 +80,11 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /clearShareDraft/);
   assert.match(app, /shareUpdateText\.value\s*=\s*""/);
   assert.match(app, /报平安草稿已清空/);
+  assert.match(app, /companionMemoryContext/);
+  assert.match(app, /memories:\s*companionMemoryContext\(\)/);
+  assert.match(app, /sensitivity\s*!==\s*"sensitive"/);
+  assert.match(app, /!item\.doNotMention/);
+  assert.match(app, /map\(\(\{\s*type,\s*label\s*\}\)\s*=>\s*\(\{\s*type,\s*label\s*\}\)\)/);
   assert.match(app, /navigator\.clipboard\.writeText/);
   assert.match(app, /生成近况/);
   assert.match(app, /已复制/);

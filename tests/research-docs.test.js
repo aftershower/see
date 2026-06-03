@@ -38,6 +38,8 @@ test("README links the validation protocol", async () => {
   assert.match(readme, /trusted person/i);
   assert.match(readme, /deleted memory should not resurface/i);
   assert.match(readme, /draft is cleared when memory changes/i);
+  assert.match(readme, /minimized non-sensitive memory context/i);
+  assert.match(readme, /type and label/i);
 });
 
 test("storage migration notes define PWA and native persistence boundaries", async () => {
@@ -81,4 +83,12 @@ test("optimization notes track payment app scam tuning", async () => {
   assert.match(notes, /Venmo/);
   assert.match(notes, /Cash App/);
   assert.match(notes, /Apple Watch false positive/i);
+});
+
+test("optimization notes track companion API context minimization", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /minimized non-sensitive memory context/i);
+  assert.match(notes, /type and label only/i);
+  assert.match(notes, /does not include detail/i);
 });

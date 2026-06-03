@@ -62,6 +62,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Scam routing now covers mobile payment apps and payment services such as Zelle, Venmo, Cash App, PayPal, payment app, Western Union, MoneyGram, OTP/passcodes, QR-code/refund scams, and six-digit SMS codes.
 - Scam routing avoids an Apple Watch false positive by treating Apple as risky only in gift-card/PIN-style contexts instead of flagging every ordinary Apple device mention.
 - Sensitive "do not mention" and grief memories now escalate existing duplicate memories to sensitive/do-not-mention, and sensitive grief text is not stored as a normal recent event.
+- `/api/chat` requests now use a minimized non-sensitive memory context with type and label only; the request does not include detail, source message IDs, timestamps, or sensitive/do-not-mention memories.
 
 ## Next Optimization Backlog
 
