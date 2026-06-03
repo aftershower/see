@@ -160,6 +160,16 @@ test("optimization notes track elder financial exploitation tuning", async () =>
   assert.match(notes, /CFPB|Department of Justice|DOJ/i);
 });
 
+test("optimization notes track romance scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /romance scam/i);
+  assert.match(notes, /online love interest/i);
+  assert.match(notes, /plane ticket|travel/i);
+  assert.match(notes, /investment|trading app|crypto/i);
+  assert.match(notes, /FTC/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
