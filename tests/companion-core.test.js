@@ -61,6 +61,9 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("女儿给我买了 Apple Watch，用来提醒散步").level, "normal");
   assert.deepEqual(classifySafety("I used PayPal to pay for groceries.").level, "normal");
   assert.deepEqual(classifySafety("我用 Apple Pay 买了菜。").level, "normal");
+  assert.deepEqual(classifySafety("I went shopping with my daughter.").level, "normal");
+  assert.deepEqual(classifySafety("我今天去政府大厅办事。").level, "normal");
+  assert.deepEqual(classifySafety("我去社保局问养老金。").level, "normal");
 });
 
 test("plans check-ins using day rhythm and memories", () => {

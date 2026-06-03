@@ -108,3 +108,10 @@ test("optimization notes track automatic raw chat retention cap", async () => {
   assert.match(notes, /automatic raw chat retention cap/i);
   assert.match(notes, /most recent 12 messages/i);
 });
+
+test("optimization notes track scam false-positive tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /shopping false positive/i);
+  assert.match(notes, /routine government or benefits-office visits/i);
+});
