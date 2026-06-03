@@ -64,7 +64,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Sensitive "do not mention" and grief memories now escalate existing duplicate memories to sensitive/do-not-mention, and sensitive grief text is not stored as a normal recent event.
 - `/api/chat` requests now use a minimized non-sensitive memory context with type and label only; the request does not include detail, source message IDs, timestamps, or sensitive/do-not-mention memories.
 - Deleted-memory tombstones are exported, imported, and used during local merge so older imports cannot resurrect deleted memories.
-- An automatic raw chat retention cap keeps only the most recent 12 messages while long-term memory remains separate.
+- An automatic raw chat retention cap keeps only the most recent 12 messages while long-term memory remains separate, including loaded legacy localStorage records.
 - Scam false-positive tuning now avoids a shopping false positive from bare `pin` matching and avoids flagging routine government or benefits-office visits without payment/code pressure.
 
 ## Next Optimization Backlog

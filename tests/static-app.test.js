@@ -53,8 +53,10 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /mergeMemories/);
   assert.match(app, /localStorage/);
   assert.match(app, /pruneRetainedMessages/);
+  assert.match(app, /retainedMessages/);
+  assert.match(app, /messages:\s*retainedMessages\(/);
   assert.match(app, /function saveState[\s\S]*pruneRetainedMessages\(\)/);
-  assert.match(app, /state\.messages\s*=\s*state\.messages\.slice\(-MAX_RETAINED_MESSAGES\)/);
+  assert.match(app, /function retainedMessages[\s\S]*messages\.slice\(-MAX_RETAINED_MESSAGES\)/);
   assert.match(app, /checkInButton/);
   assert.match(app, /resetButton/);
   assert.match(app, /exportButton/);

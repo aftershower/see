@@ -51,8 +51,9 @@ function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return defaultState();
     const parsed = JSON.parse(saved);
+    const messages = Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages;
     return {
-      messages: Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages,
+      messages: retainedMessages(messages),
       memories: Array.isArray(parsed.memories) ? parsed.memories : [],
       deletedMemoryKeys: normalizeDeletedMemoryKeys(parsed.deletedMemoryKeys),
       checkIn: parsed.checkIn || null
@@ -75,9 +76,11 @@ function saveState() {
 }
 
 function pruneRetainedMessages() {
-  if (state.messages.length > MAX_RETAINED_MESSAGES) {
-    state.messages = state.messages.slice(-MAX_RETAINED_MESSAGES);
-  }
+  state.messages = retainedMessages(state.messages);
+}
+
+function retainedMessages(messages = []) {
+  return messages.length > MAX_RETAINED_MESSAGES ? messages.slice(-MAX_RETAINED_MESSAGES) : messages;
 }
 
 function addMessage(role, text, safetyLevel = "normal") {
