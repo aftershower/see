@@ -54,6 +54,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("Someone said my grandson was in jail and needed bail money right away, but told me not to tell anyone.").level, "scam");
   assert.deepEqual(classifySafety("网上认识的男朋友说想来看我，但让我先给他转机票钱。").level, "scam");
   assert.deepEqual(classifySafety("My online boyfriend says he loves me and wants me to invest in his special trading app.").level, "scam");
+  assert.deepEqual(classifySafety("They said I won a sweepstakes prize but need to pay taxes and shipping before I can claim it.").level, "scam");
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
@@ -88,6 +89,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("My daughter helped me deposit my Social Security check.").level, "normal");
   assert.deepEqual(classifySafety("网上认识的朋友今天给我寄了花，说周末再聊天。").level, "normal");
   assert.deepEqual(classifySafety("My online friend sent me flowers and we talked about music.").level, "normal");
+  assert.deepEqual(classifySafety("I bought a lottery ticket at the store and checked the numbers.").level, "normal");
+  assert.deepEqual(classifySafety("I paid my property taxes this year.").level, "normal");
   assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把银行密码告诉他。").level, "scam");
 });
@@ -174,6 +177,7 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   const paymentAppScam = generateCompanionReply({ text: "Someone asked me to send money through Cash App and keep it secret.", memories: [], locale: "en-US" });
   const familyEmergencyScam = generateCompanionReply({ text: "Someone said my grandson was in jail and needed bail money right away, but told me not to tell anyone.", memories: [], locale: "en-US" });
   const romanceScam = generateCompanionReply({ text: "My online boyfriend says he loves me and wants money for a plane ticket.", memories: [], locale: "en-US" });
+  const prizeScam = generateCompanionReply({ text: "They said I won a sweepstakes prize but need to pay taxes and shipping before I can claim it.", memories: [], locale: "en-US" });
   const fakeAgency = generateCompanionReply({ text: "有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人。", memories: [] });
   const financialExploitation = generateCompanionReply({ text: "My caregiver is forcing me to sign power of attorney and taking my debit card.", memories: [], locale: "en-US" });
   const medication = generateCompanionReply({ text: "我好像吃错药了，头很晕。", memories: [] });
@@ -205,6 +209,8 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(familyEmergencyScam.text, /亲友|孙子|保释金|医药费|known family|family contact|bail/i);
   assert.equal(romanceScam.safety.level, "scam");
   assert.match(romanceScam.text, /网上|恋人|online|romance|机票|投资|trading|money/i);
+  assert.equal(prizeScam.safety.level, "scam");
+  assert.match(prizeScam.text, /中奖|prize|sweepstakes|lottery|税费|tax|shipping|fee/i);
   assert.equal(fakeAgency.safety.level, "scam");
   assert.match(fakeAgency.text, /别急|慢下来|信得过的人/);
   assert.equal(financialExploitation.safety.level, "urgent");

@@ -170,6 +170,16 @@ test("optimization notes track romance scam tuning", async () => {
   assert.match(notes, /FTC/i);
 });
 
+test("optimization notes track prize scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /prize scam|sweepstakes/i);
+  assert.match(notes, /lottery/i);
+  assert.match(notes, /taxes|fees|shipping/i);
+  assert.match(notes, /bank account|credit card/i);
+  assert.match(notes, /FTC/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
