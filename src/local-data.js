@@ -71,6 +71,9 @@ function mergeMemoryItem(previous, next) {
   return {
     ...chosen,
     confidence: Math.max(previous.confidence || 0, next.confidence || 0),
+    sensitivity: previous.sensitivity === "sensitive" || next.sensitivity === "sensitive" ? "sensitive" : chosen.sensitivity || "normal",
+    doNotMention: Boolean(previous.doNotMention || next.doNotMention),
+    polarity: previous.polarity === "negative" || next.polarity === "negative" ? "negative" : chosen.polarity || "neutral",
     updatedAt: latestDate(previous.updatedAt, next.updatedAt) || chosen.updatedAt
   };
 }

@@ -9,6 +9,7 @@
 - NIH/NIA guidance emphasizes staying connected with family, friends, shared interests, activities, and community; it also distinguishes loneliness from social isolation. Source: https://magazine.medlineplus.gov/article/stay-connected-tips-from-the-national-institute-on-aging-for-combating-social-isolation-and-loneliness/
 - WCAG 2.2 adds guidance relevant to older users, including target size, visible focus, and support for low-vision, cognitive, and mobile accessibility. Source: https://www.w3.org/TR/WCAG22/
 - FTC guidance says gift card, PIN, urgent-payment, government-impersonation, tech-support, and "do not tell anyone" payment requests should be treated as scams, and reports can be filed at ReportFraud.ftc.gov. Source: https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams
+- FTC guidance on mobile payment apps says scammers may try to trick people into sending money through apps such as Venmo, Cash App, or PayPal, and that mobile payment app scam reports can go to ReportFraud.ftc.gov. Source: https://consumer.ftc.gov/articles/mobile-payment-apps-how-avoid-scam-when-you-use-one
 - AARP's long-term-care AI guidance warns that AI tools for older adults need guardrails for errors, bias, privacy vulnerabilities, and overreliance. Source: https://www.aarp.org/pri/topics/ltss/artificial-intelligence-long-term-care/
 - MIT Media Lab's AI companionship research argues that chatbots should complement, not replace, human connections. Source: https://www-prod.media.mit.edu/publications/chatbot-companionship-loneliness-study/
 - A 2026 Psychological Science longitudinal study reports that lower perceived social connection predicted later social chatbot use, so companion products should avoid deepening substitution patterns. Source: https://journals.sagepub.com/doi/10.1177/09567976261427747
@@ -58,6 +59,9 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - AI-dependency language now routes to a support response that validates the feeling, says See cannot replace family or friends, suggests one small trusted-person contact, and avoids saving that dependency disclosure as memory.
 - Family update drafts now use only the current non-sensitive memory list, not raw chat text, so deleting a memory prevents it from resurfacing in a share draft.
 - Existing family-update drafts are cleared when memories are deleted, imports are applied, the record is reset, or new chat updates memory, so deleted memories cannot stay visible in stale copy text.
+- Scam routing now covers mobile payment apps and payment services such as Zelle, Venmo, Cash App, PayPal, payment app, Western Union, MoneyGram, OTP/passcodes, QR-code/refund scams, and six-digit SMS codes.
+- Scam routing avoids an Apple Watch false positive by treating Apple as risky only in gift-card/PIN-style contexts instead of flagging every ordinary Apple device mention.
+- Sensitive "do not mention" and grief memories now escalate existing duplicate memories to sensitive/do-not-mention, and sensitive grief text is not stored as a normal recent event.
 
 ## Next Optimization Backlog
 
@@ -72,6 +76,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - test whether older adults understand that "给家人报平安" is editable, copied by choice, and not sent automatically
    - test whether deleted memories stay absent from "给家人报平安" drafts
    - test whether stale "给家人报平安" drafts disappear after memory/import/reset changes
+   - use the scripted safety scenario deck to cover scam, self-harm/crisis, medication mistake, wandering/confusion, abuse/neglect, AI-dependency, and caregiver-consent boundaries
    - add scripted AI-dependency prompts to check that See nudges toward human connection without shaming the user
 
 3. Strengthen local persistence:

@@ -80,3 +80,29 @@ test("merges imported local data without replacing newer local messages", () => 
   assert.equal(merged.memories.find((item) => item.type === "person").detail, "女儿今天来过");
   assert.equal(merged.checkIn.text, "现在的问候");
 });
+
+test("preserves conservative privacy flags when imported memories merge", () => {
+  const currentState = {
+    messages: [
+      { id: "m-current", role: "user", text: "今天女儿来了", createdAt: "2026-06-02T12:00:00.000Z" }
+    ],
+    memories: [
+      { id: "person-xiaoling-current", type: "person", label: "小玲", detail: "女儿今天来过", sensitivity: "normal", doNotMention: false, confidence: 0.9, updatedAt: "2026-06-02T12:00:00.000Z" }
+    ]
+  };
+  const importedState = {
+    messages: [
+      { id: "m-old", role: "user", text: "别再提小玲", createdAt: "2026-06-01T12:00:00.000Z" }
+    ],
+    memories: [
+      { id: "person-xiaoling-sensitive", type: "person", label: "小玲", detail: "不要再提小玲", sensitivity: "sensitive", doNotMention: true, confidence: 0.7, updatedAt: "2026-06-01T12:00:00.000Z" }
+    ]
+  };
+
+  const merged = mergeLocalDataStates(currentState, importedState);
+  const xiaoling = merged.memories.find((item) => item.type === "person" && item.label === "小玲");
+
+  assert.equal(xiaoling.sensitivity, "sensitive");
+  assert.equal(xiaoling.doNotMention, true);
+  assert.equal(xiaoling.detail, "女儿今天来过");
+});

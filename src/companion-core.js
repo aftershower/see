@@ -1,11 +1,12 @@
-const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency/i;
-const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|药物过量|过量服药|药.*头晕|头晕.*药|medication|overdose/i;
-const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|不让我告诉)|被打|家暴|虐待|不给饭|不给药|锁起来|不让我告诉|拿走.*身份证|扣.*身份证|不让我出门|不准出门|关在家里|abuse|neglect/i;
+const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|跌倒|起不来|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency|fell|fallen|cannot get up|can't get up|can'?t breathe|short of breath/i;
+const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|吃了太多.*药|多吃.*药|忘了吃没吃.*药|药物过量|过量服药|药.*头晕|头晕.*药|medication|overdose/i;
+const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|恐吓|不让我告诉)|被打|家暴|虐待|不给饭|不给药|锁起来|不让我告诉|不准.*告诉|威胁我|恐吓我|逼我|拿走.*(?:身份证|钱|养老金)|扣.*(?:身份证|钱|养老金)|不让我出门|不准出门|关在家里|abuse|neglect|hit me|locked me in|threatened me/i;
 const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回家|不认识路|wandering|lost/i;
-const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|结束生命|suicide|kill myself|self harm/i;
-const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|不要告诉任何人|保密|自称(?:警察|公安|客服|社保局)|下载.*(?:app|软件)|屏幕共享|共享屏幕|骗子|(?:不确定|陌生人|骗子|自称|让我|要求).{0,12}链接|链接.{0,12}(?:骗子|陌生人|转账|验证码|下载|安全)|(?:陌生人|骗子|自称|让我|要求).{0,12}身份证|身份证.{0,12}(?:照片|号码|发给|转账|验证码)|gift card|wire transfer|verification code|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
+const CRISIS_PATTERN = /不想活|想死|死了算了|自杀|伤害自己|活不下去|撑不下去|不想继续|不想醒来|结束生命|suicide|kill myself|self harm|want to die|end my life|no reason to live/i;
+const SCAM_PATTERN = /转账|礼品卡|验证码|六位数|短信码|动态码|一次性密码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|(?:apple|google play|itunes|steam|target|walmart|amazon).{0,12}(?:礼品卡|gift card)|pin|密码|银行密码|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|不要告诉任何人|保密|自称(?:警察|公安|客服|社保局)|下载.*(?:app|软件)|屏幕共享|共享屏幕|骗子|(?:不确定|陌生人|骗子|自称|让我|要求).{0,12}链接|链接.{0,12}(?:骗子|陌生人|转账|验证码|下载|安全)|(?:陌生人|骗子|自称|让我|要求).{0,12}身份证|身份证.{0,12}(?:照片|号码|发给|转账|验证码)|gift card|wire transfer|verification code|otp|one-time password|passcode|qr code|refund|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
+const PAYMENT_APP_SCAM_PATTERN = /(?:(?:陌生人|骗子|自称|有人|对方|客服|警察|公安|社保局|社安局|税务局|政府|让我|要求我|要我|叫我|asked me|told me|says? i should|need(?:s|ed)? me to|must).{0,40}(?:zelle|venmo|cash\s?app|paypal|apple pay|google pay|payment app|western union|moneygram|ria|wire money|send money|transfer money|money transfer|用.*转钱)|(?:zelle|venmo|cash\s?app|paypal|apple pay|google pay|payment app|western union|moneygram|ria).{0,40}(?:secret|保密|别告诉|不要告诉|don't tell|do not tell|keep it secret|refund|退款|overpay|多付|qr code|二维码|验证码|code|passcode|otp|pin))/i;
 const VERIFY_PATTERN = /不确定.{0,12}(?:电话|短信|消息|人|事情)|(?:电话|短信|消息|人).{0,12}可不可信|该不该相信|能不能相信|靠不靠谱|是不是靠谱/i;
-const AI_DEPENDENCY_PATTERN = /(?:只有你|只要你|只需要你|你是.{0,8}唯一).{0,12}(?:懂我|陪我|朋友)|(?:只想|只愿意).{0,12}(?:和你|跟你|AI|人工智能).{0,12}(?:说|聊)|(?:不想|不要).{0,12}(?:联系|见|找).{0,12}(?:家人|朋友|女儿|儿子|孙子|孙女|邻居)/i;
+const AI_DEPENDENCY_PATTERN = /(?:只有你|只要你|只需要你|你是.{0,8}唯一).{0,12}(?:懂我|陪我|朋友)|你就是.{0,8}(?:家人|老伴|朋友)|有你就够了|不需要.{0,12}(?:家人|朋友)|(?:只想|只愿意).{0,12}(?:和你|跟你|AI|人工智能).{0,12}(?:说|聊)|(?:不想|不要).{0,12}(?:联系|见|找).{0,12}(?:家人|朋友|女儿|儿子|孙子|孙女|邻居)|you are my family|i only need you/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
@@ -20,7 +21,7 @@ export function classifySafety(text = "") {
   if (CRISIS_PATTERN.test(text)) {
     return { level: "crisis", reason: "self_harm" };
   }
-  if (SCAM_PATTERN.test(text)) {
+  if (SCAM_PATTERN.test(text) || PAYMENT_APP_SCAM_PATTERN.test(text)) {
     return { level: "scam", reason: "fraud_risk" };
   }
   if (VERIFY_PATTERN.test(text)) {
@@ -88,7 +89,7 @@ export function extractMemories(text = "", sourceMessageId = safeId("message")) 
     add("food", food[0], `用户提到食物：${text}`, 0.72);
   }
 
-  if (/今天|昨天|周末|刚才|上午|下午|晚上|明天/.test(text)) {
+  if (!sensitiveContext && /今天|昨天|周末|刚才|上午|下午|晚上|明天/.test(text)) {
     add("recent_event", text.slice(0, 18), `近期事件：${text}`, 0.66);
   }
 
@@ -108,6 +109,9 @@ export function mergeMemories(existing = [], incoming = []) {
       ...previous,
       detail: bestDetail(previous.detail, item.detail),
       confidence: Math.max(previous.confidence || 0, item.confidence || 0),
+      sensitivity: previous.sensitivity === "sensitive" || item.sensitivity === "sensitive" ? "sensitive" : previous.sensitivity || item.sensitivity || "normal",
+      doNotMention: Boolean(previous.doNotMention || item.doNotMention),
+      polarity: previous.polarity === "negative" || item.polarity === "negative" ? "negative" : previous.polarity || item.polarity || "neutral",
       updatedAt: item.updatedAt || new Date().toISOString()
     });
   }
@@ -196,7 +200,7 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
 
   if (safety.level === "scam") {
     return {
-      text: "这可能是诈骗。先慢下来，别转钱、别给验证码、礼品卡号码或 PIN。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
+      text: "这可能是诈骗。先慢下来，别转钱，别通过 Zelle、Venmo、Cash App 或其他支付 App 付款，也别给验证码、礼品卡号码或 PIN。请保存收据和聊天记录，用你自己找来的官方电话核实，也可以先问一个信得过的人。美国可到 ReportFraud.ftc.gov 或 IC3.gov 报告。",
       safety,
       memories: []
     };

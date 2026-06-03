@@ -18,6 +18,15 @@ test("validation protocol defines elder companion pilot measures", async () => {
   assert.match(protocol, /false positive/i);
   assert.match(protocol, /false negative/i);
   assert.match(protocol, /scam/i);
+  assert.match(protocol, /Scripted Safety Scenario Deck/);
+  assert.match(protocol, /self-harm\/crisis/i);
+  assert.match(protocol, /medication mistake/i);
+  assert.match(protocol, /wandering\/confusion/i);
+  assert.match(protocol, /abuse\/neglect/i);
+  assert.match(protocol, /AI-dependency/i);
+  assert.match(protocol, /caregiver.*asks for a summary/i);
+  assert.match(protocol, /older adult controls whether anything is shared/i);
+  assert.match(protocol, /exploratory unless at least/i);
 });
 
 test("README links the validation protocol", async () => {
@@ -62,4 +71,14 @@ test("optimization notes track stale family update draft clearing", async () => 
 
   assert.match(notes, /existing family-update drafts are cleared/i);
   assert.match(notes, /deleted memories cannot stay visible/i);
+});
+
+test("optimization notes track payment app scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /mobile payment apps/i);
+  assert.match(notes, /Zelle/);
+  assert.match(notes, /Venmo/);
+  assert.match(notes, /Cash App/);
+  assert.match(notes, /Apple Watch false positive/i);
 });
