@@ -10,6 +10,7 @@ const AI_DEPENDENCY_PATTERN = /(?:只有你|只要你|只需要你|你是.{0,8}�
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
+  text = safeText(text);
   if (
     URGENT_PATTERN.test(text)
     || MEDICATION_URGENCY_PATTERN.test(text)
@@ -37,6 +38,7 @@ export function classifySafety(text = "") {
 }
 
 export function extractMemories(text = "", sourceMessageId = safeId("message")) {
+  text = safeText(text);
   const memories = [];
   const now = new Date().toISOString();
   const sensitiveContext = /别再提|不要提|别提|去世|走了|不在了|过世/.test(text);
@@ -179,6 +181,7 @@ export function planCheckIn({ now = new Date(), lastMessageAt = null, memories =
 }
 
 export function generateCompanionReply({ text = "", memories = [], now = new Date(), locale = "zh-CN" } = {}) {
+  text = safeText(text);
   const safety = classifySafety(text);
   const extractedMemories = extractMemories(text);
   const resources = safetyResources(locale);
@@ -447,4 +450,8 @@ function slug(value) {
 
 function safeId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function safeText(value) {
+  return typeof value === "string" ? value : "";
 }

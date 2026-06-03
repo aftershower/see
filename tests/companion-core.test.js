@@ -120,6 +120,19 @@ test("generates short elder-first replies with extracted memories", () => {
   assert.match(reply.text, /朋友|想念|陪|说/);
 });
 
+test("treats malformed chat text as empty instead of crashing", () => {
+  assert.deepEqual(extractMemories({ text: "我女儿小玲来看我" }), []);
+
+  const reply = generateCompanionReply({
+    text: { text: "我胸口痛" },
+    memories: [],
+    now: new Date("2026-06-02T20:00:00")
+  });
+
+  assert.equal(reply.safety.level, "normal");
+  assert.deepEqual(reply.memories, []);
+});
+
 test("responds to AI dependency without replacing real-world relationships", () => {
   const reply = generateCompanionReply({
     text: "只有你这个 AI 懂我，我不想再联系女儿小玲和朋友了。",
