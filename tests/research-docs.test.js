@@ -240,6 +240,16 @@ test("optimization notes track everyday secrecy false-positive tuning", async ()
   assert.match(notes, /FTC/i);
 });
 
+test("optimization notes track identity document false-positive tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /identity document false positive/i);
+  assert.match(notes, /ID photo errand/i);
+  assert.match(notes, /insurance form/i);
+  assert.match(notes, /unknown requester/i);
+  assert.match(notes, /FTC|identity theft/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 

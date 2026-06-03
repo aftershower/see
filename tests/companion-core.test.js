@@ -48,6 +48,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人").level, "scam");
   assert.deepEqual(classifySafety("我不确定这个链接是不是骗子发来的").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把身份证照片发给他").level, "scam");
+  assert.deepEqual(classifySafety("Someone asked me to send a photo of my ID card over chat.").level, "scam");
   assert.deepEqual(classifySafety("银行客服说账户有风险，让我把钱转到安全账户保护资金。").level, "scam");
   assert.deepEqual(classifySafety("Someone told me to move my money to a safe account to protect it.").level, "scam");
   assert.deepEqual(classifySafety("有人说我孙子出车祸被警察带走了，让我马上交保释金，还说先别告诉家里人。").level, "scam");
@@ -87,6 +88,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("今天吃了面条").level, "normal");
   assert.deepEqual(classifySafety("女儿发来相册链接，我点开看照片").level, "normal");
   assert.deepEqual(classifySafety("我今天去派出所办身份证").level, "normal");
+  assert.deepEqual(classifySafety("我今天去照相馆拍身份证照片，准备办证。").level, "normal");
+  assert.deepEqual(classifySafety("我把身份证号码写在自己的保险表格上。").level, "normal");
   assert.deepEqual(classifySafety("女儿给我买了 Apple Watch，用来提醒散步").level, "normal");
   assert.deepEqual(classifySafety("I used PayPal to pay for groceries.").level, "normal");
   assert.deepEqual(classifySafety("我用 Apple Pay 买了菜。").level, "normal");
