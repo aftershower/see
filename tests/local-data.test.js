@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeMemoryItems,
   normalizeImportedState
 } from "../src/local-data.js";
 
@@ -46,6 +47,19 @@ test("normalizes imported memories by trimming labels and dropping blank records
   assert.equal(normalized.memories.length, 1);
   assert.equal(normalized.memories[0].type, "person");
   assert.equal(normalized.memories[0].label, "小玲");
+});
+
+test("normalizes stored memory items for saved local records", () => {
+  const memories = normalizeMemoryItems([
+    { id: "blank-label", type: "person", label: "   ", detail: "ignore" },
+    { id: "blank-type", type: "   ", label: "小玲", detail: "ignore" },
+    { id: "trimmed", type: " person ", label: " 小玲 ", detail: "女儿" },
+    { id: "bad", type: "person", detail: "missing label" }
+  ], { createId: (prefix) => `${prefix}-fallback` });
+
+  assert.deepEqual(memories, [
+    { id: "trimmed", type: "person", label: "小玲", detail: "女儿" }
+  ]);
 });
 
 test("detects when an imported export is older than current local messages", () => {

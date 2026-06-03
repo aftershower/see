@@ -113,6 +113,9 @@ test("optimization notes track automatic raw chat retention cap", async () => {
   assert.match(notes, /loaded legacy localStorage records/i);
   assert.match(notes, /initializes the retention limit before loading/i);
   assert.match(notes, /writes pruned legacy records back/i);
+  assert.match(notes, /legacy localStorage memory items/i);
+  assert.match(notes, /Web Storage API/i);
+  assert.match(notes, /OWASP HTML5 Security Cheat Sheet/i);
 });
 
 test("optimization notes track scam false-positive tuning", async () => {

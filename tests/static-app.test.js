@@ -79,6 +79,9 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /if\s*\(\s*saveState\(\)\s*\)\s*\{\s*render\(\);\s*setStorageStatus\("已保留最近/s);
   assert.match(app, /mergeLocalDataStates/);
   assert.match(app, /new FileReader/);
+  assert.match(app, /normalizeMemoryItems/);
+  assert.match(app, /const memories\s*=\s*normalizeMemoryItems\(originalMemories/);
+  assert.match(app, /memories,\s*\n\s*deletedMemoryKeys/);
   assert.match(app, /trimHistory/);
   assert.match(app, /URL\.createObjectURL/);
   assert.match(app, /new Blob/);
@@ -118,6 +121,10 @@ test("browser app initializes retention before loading and persists pruned legac
   );
   assert.match(app, /let shouldPersistLoadedState\s*=\s*false/);
   assert.match(app, /shouldPersistLoadedState\s*=\s*true/);
+  assert.match(app, /const storedMemoriesAreArray\s*=\s*Array\.isArray\(parsed\.memories\)/);
+  assert.match(app, /const originalMemories\s*=\s*storedMemoriesAreArray/);
+  assert.match(app, /!storedMemoriesAreArray/);
+  assert.match(app, /JSON\.stringify\(memories\)\s*!==\s*JSON\.stringify\(originalMemories\)/);
   assert.match(app, /if\s*\(\s*shouldPersistLoadedState\s*\)\s*\{\s*saveState\(\);\s*\}/);
 });
 

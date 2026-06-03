@@ -7,6 +7,7 @@ import {
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeMemoryItems,
   normalizeImportedState
 } from "./src/local-data.js";
 
@@ -54,12 +55,15 @@ function loadState() {
     const parsed = JSON.parse(saved);
     const messages = Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages;
     const retained = retainedMessages(messages);
-    if (retained.length !== messages.length) {
+    const storedMemoriesAreArray = Array.isArray(parsed.memories);
+    const originalMemories = storedMemoriesAreArray ? parsed.memories : [];
+    const memories = normalizeMemoryItems(originalMemories, { createId });
+    if (retained.length !== messages.length || !storedMemoriesAreArray || JSON.stringify(memories) !== JSON.stringify(originalMemories)) {
       shouldPersistLoadedState = true;
     }
     return {
       messages: retained,
-      memories: Array.isArray(parsed.memories) ? parsed.memories : [],
+      memories,
       deletedMemoryKeys: normalizeDeletedMemoryKeys(parsed.deletedMemoryKeys),
       checkIn: parsed.checkIn || null
     };

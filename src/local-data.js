@@ -22,18 +22,24 @@ export function normalizeImportedState(imported, options = {}) {
 
   return {
     messages,
-    memories: imported.memories
-      .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
-      .map((item) => ({
-        ...item,
-        type: item.type.trim(),
-        label: item.label.trim(),
-        id: typeof item.id === "string" ? item.id : createId("memory")
-      }))
-      .filter((item) => item.type && item.label),
+    memories: normalizeMemoryItems(imported.memories, { createId }),
     checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null,
     deletedMemoryKeys: normalizeDeletedMemoryKeys(imported.deletedMemoryKeys)
   };
+}
+
+export function normalizeMemoryItems(memories = [], options = {}) {
+  const createId = options.createId || ((prefix) => `${prefix}-${Date.now()}`);
+  if (!Array.isArray(memories)) return [];
+  return memories
+    .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
+    .map((item) => ({
+      ...item,
+      type: item.type.trim(),
+      label: item.label.trim(),
+      id: typeof item.id === "string" ? item.id : createId("memory")
+    }))
+    .filter((item) => item.type && item.label);
 }
 
 export function needsImportConflictConfirmation(currentState, imported) {

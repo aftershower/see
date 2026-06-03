@@ -17,6 +17,8 @@
 - Apple CloudKit private databases are user-owned iCloud storage: only the user can access private database content by default, it requires an iCloud account for writes, and it counts toward the user's iCloud quota. Source: https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase
 - Apple's Speech framework supports recognizing spoken words from recorded or live audio, which keeps a future native iOS path open for tap-to-start voice capture without committing the PWA to continuous listening. Source: https://developer.apple.com/documentation/speech/
 - MDN documents `navigator.clipboard.writeText()` as a browser Clipboard API method for writing text in secure contexts, which fits a user-click copy flow without adding a server-side sharing channel. Source: https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
+- MDN's Web Storage API documentation describes `localStorage` as data stored with no expiration time and saved across browser sessions, which makes legacy local records part of the privacy-retention surface. Source: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+- OWASP HTML5 Security Cheat Sheet warns against storing sensitive information in local storage, reinforcing that local records should be minimized, normalized, and easy to delete. Source: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html
 - UK official guidance lists 999 and 112 as national emergency numbers. Source: https://www.gov.uk/guidance/999-and-112-the-uks-national-emergency-numbers
 - Samaritans lists 116 123 as its UK/Ireland freephone support number. Source: https://www.samaritans.org/how-we-can-help/contact-samaritan/
 - Canada 9-8-8 is the national suicide crisis helpline. Source: https://988.ca/
@@ -68,6 +70,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Deleted-memory tombstones are exported, imported, and used during local merge so older imports cannot resurrect deleted memories.
 - An automatic raw chat retention cap keeps only the most recent 12 messages while long-term memory remains separate, including loaded legacy localStorage records.
 - The browser now initializes the retention limit before loading saved state and writes pruned legacy records back on open, so old localStorage chat history is not silently restored or left untrimmed at rest.
+- Legacy localStorage memory items are normalized on load with the same trimming and blank-record filtering used for JSON imports, then written back when normalization changes the stored content.
 - Scam false-positive tuning now avoids a shopping false positive from bare `pin` matching and avoids flagging routine government or benefits-office visits without payment/code pressure.
 - Safety routing now catches additional high-risk phrases: explicit self-harm method language, English "too many pills" overdose wording, and caregiver statements about withholding medicine.
 
