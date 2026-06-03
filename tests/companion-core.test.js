@@ -70,6 +70,9 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("我今天去政府大厅办事。").level, "normal");
   assert.deepEqual(classifySafety("我去社保局问养老金。").level, "normal");
   assert.deepEqual(classifySafety("I watched kids jump off the dock into the lake.").level, "normal");
+  assert.deepEqual(classifySafety("I used a pin to hold my scarf.").level, "normal");
+  assert.deepEqual(classifySafety("今天有个陌生人问路，我没理他。").level, "normal");
+  assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
 });
 
 test("plans check-ins using day rhythm and memories", () => {
