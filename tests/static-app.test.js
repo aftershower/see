@@ -77,6 +77,9 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /URL\.createObjectURL/);
   assert.match(app, /new Blob/);
   assert.match(app, /createShareableUpdate/);
+  assert.match(app, /clearShareDraft/);
+  assert.match(app, /shareUpdateText\.value\s*=\s*""/);
+  assert.match(app, /报平安草稿已清空/);
   assert.match(app, /navigator\.clipboard\.writeText/);
   assert.match(app, /生成近况/);
   assert.match(app, /已复制/);
@@ -84,6 +87,9 @@ test("browser app wires local memory and companion core", async () => {
   assert.doesNotMatch(app, /\/api\/share/);
   assert.doesNotMatch(app, /mailto:/);
   assert.match(app, /removeMemory/);
+  assert.match(app, /function removeMemory[\s\S]*clearShareDraft/);
+  assert.match(app, /function applyImportedState[\s\S]*clearShareDraft/);
+  assert.match(app, /resetButton\.addEventListener[\s\S]*clearShareDraft/);
   assert.match(app, /data-memory-id/);
 });
 

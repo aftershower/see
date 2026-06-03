@@ -14,6 +14,7 @@ test("validation protocol defines elder companion pilot measures", async () => {
   assert.match(protocol, /给家人报平安/);
   assert.match(protocol, /not sent automatically/i);
   assert.match(protocol, /deleted memory does not reappear/i);
+  assert.match(protocol, /existing draft is cleared/i);
   assert.match(protocol, /false positive/i);
   assert.match(protocol, /false negative/i);
   assert.match(protocol, /scam/i);
@@ -27,6 +28,7 @@ test("README links the validation protocol", async () => {
   assert.match(readme, /replacement for real relationships/i);
   assert.match(readme, /trusted person/i);
   assert.match(readme, /deleted memory should not resurface/i);
+  assert.match(readme, /draft is cleared when memory changes/i);
 });
 
 test("storage migration notes define PWA and native persistence boundaries", async () => {
@@ -53,4 +55,11 @@ test("optimization notes track expanded locale safety resources", async () => {
   assert.match(notes, /116 123/);
   assert.match(notes, /1767/);
   assert.match(notes, /14416/);
+});
+
+test("optimization notes track stale family update draft clearing", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /existing family-update drafts are cleared/i);
+  assert.match(notes, /deleted memories cannot stay visible/i);
 });

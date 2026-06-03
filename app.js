@@ -91,6 +91,7 @@ async function handleUserText(text) {
 
   const reply = await requestCompanionReply(trimmed);
   state.memories = mergeMemories(state.memories, reply.memories || []);
+  clearShareDraft();
   addMessage("assistant", reply.text, reply.safety?.level || "normal");
   state.checkIn = reply.checkIn || planCheckIn({ memories: state.memories });
   saveState();
@@ -216,8 +217,9 @@ function renderMemories() {
 function removeMemory(memoryId) {
   state.memories = state.memories.filter((item) => item.id !== memoryId);
   state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
-  saveState();
+  const saved = saveState();
   render();
+  clearShareDraft(saved);
 }
 
 function exportState() {
@@ -283,6 +285,7 @@ function applyImportedState(imported, options = {}) {
   }
   const saved = saveState();
   render();
+  clearShareDraft();
   return saved;
 }
 
@@ -311,6 +314,15 @@ function generateShareableUpdate() {
   shareUpdateText.hidden = false;
   copyUpdateButton.hidden = false;
   setStorageStatus("已生成近况。请先看一遍，再决定要不要发给家人。");
+}
+
+function clearShareDraft(announce = false) {
+  shareUpdateText.value = "";
+  shareUpdateText.hidden = true;
+  copyUpdateButton.hidden = true;
+  if (announce) {
+    setStorageStatus("报平安草稿已清空。请重新生成近况。");
+  }
 }
 
 async function copyShareableUpdate() {
@@ -419,8 +431,9 @@ resetButton.addEventListener("click", () => {
   state.messages = fresh.messages;
   state.memories = fresh.memories;
   state.checkIn = fresh.checkIn;
-  saveState();
+  const saved = saveState();
   render();
+  clearShareDraft(saved);
 });
 
 render();

@@ -57,6 +57,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - A new "给家人报平安" flow creates a local, editable, user-copied update instead of a caregiver dashboard or automatic send. It rechecks candidate messages with safety routing and excludes urgent, crisis, scam, verify, support, sensitive, and "do not mention" content.
 - AI-dependency language now routes to a support response that validates the feeling, says See cannot replace family or friends, suggests one small trusted-person contact, and avoids saving that dependency disclosure as memory.
 - Family update drafts now use only the current non-sensitive memory list, not raw chat text, so deleting a memory prevents it from resurfacing in a share draft.
+- Existing family-update drafts are cleared when memories are deleted, imports are applied, the record is reset, or new chat updates memory, so deleted memories cannot stay visible in stale copy text.
 
 ## Next Optimization Backlog
 
@@ -70,6 +71,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - convert observed blockers into product changes
    - test whether older adults understand that "给家人报平安" is editable, copied by choice, and not sent automatically
    - test whether deleted memories stay absent from "给家人报平安" drafts
+   - test whether stale "给家人报平安" drafts disappear after memory/import/reset changes
    - add scripted AI-dependency prompts to check that See nudges toward human connection without shaming the user
 
 3. Strengthen local persistence:
