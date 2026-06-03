@@ -54,6 +54,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
   assert.deepEqual(classifySafety("I took too many pills and feel strange.").level, "urgent");
+  assert.deepEqual(classifySafety("I took too much medication and feel strange.").level, "urgent");
   assert.deepEqual(classifySafety("护工打我，还不让我告诉女儿").level, "urgent");
   assert.deepEqual(classifySafety("My caregiver won't give me my medicine.").level, "urgent");
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
@@ -72,6 +73,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("我今天去政府大厅办事。").level, "normal");
   assert.deepEqual(classifySafety("我去社保局问养老金。").level, "normal");
   assert.deepEqual(classifySafety("I watched kids jump off the dock into the lake.").level, "normal");
+  assert.deepEqual(classifySafety("I picked up my medication refill today.").level, "normal");
   assert.deepEqual(classifySafety("I used a pin to hold my scarf.").level, "normal");
   assert.deepEqual(classifySafety("今天有个陌生人问路，我没理他。").level, "normal");
   assert.deepEqual(classifySafety("我忘了手机密码，打不开了。").level, "normal");

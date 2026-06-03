@@ -1,5 +1,5 @@
 const URGENT_PATTERN = /胸口|胸痛|喘不上气|中风|摔倒|跌倒|起不来|昏倒|流血|急救|救命|煤气|着火|火灾|走丢|heart|stroke|emergency|fell|fallen|cannot get up|can't get up|can'?t breathe|short of breath/i;
-const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|吃了太多.*药|多吃.*药|忘了吃没吃.*药|药物过量|过量服药|药.*头晕|头晕.*药|medication|overdose|too many (?:pills|tablets)|took too many (?:pills|tablets)/i;
+const MEDICATION_URGENCY_PATTERN = /吃错药|药吃错|吃多了药|药吃多|多吃了药|吃了太多.*药|多吃.*药|忘了吃没吃.*药|药物过量|过量服药|药.*头晕|头晕.*药|wrong medication|medication mistake|mixed up my medication|too much medication|took too much medication|overdose|too many (?:pills|tablets)|took too many (?:pills|tablets)/i;
 const PERSONAL_DANGER_PATTERN = /护工.*(?:打|骂|推|不给|威胁|恐吓|不让我告诉)|被打|家暴|虐待|不给饭|不给药|锁起来|不让我告诉|不准.*告诉|威胁我|恐吓我|逼我|拿走.*(?:身份证|钱|养老金)|扣.*(?:身份证|钱|养老金)|不让我出门|不准出门|关在家里|abuse|neglect|hit me|locked me in|threatened me|caregiver.{0,40}(?:won'?t|will not|refuses? to).{0,40}(?:medicine|medication|pills|food|water)/i;
 const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回家|不认识路|wandering|lost/i;
 const CRISIS_PATTERN = /不想活|想死|死了算了|自杀|伤害自己|活不下去|撑不下去|不想继续|不想醒来|再也不想醒|再也不醒|结束生命|跳楼|跳下去|割腕|上吊|suicide|kill myself|self harm|want to die|end my life|end it all|no reason to live|do not want to wake up|don'?t want to wake up|(?:want to|going to|about to|plan to).{0,20}jump off/i;
