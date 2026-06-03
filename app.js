@@ -63,6 +63,7 @@ function loadState() {
 }
 
 function saveState() {
+  pruneRetainedMessages();
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     setStorageStatus("");
@@ -70,6 +71,12 @@ function saveState() {
   } catch {
     setStorageStatus("这台设备暂时没有保存新的聊天。你仍可以继续聊，稍后再试。", "error");
     return false;
+  }
+}
+
+function pruneRetainedMessages() {
+  if (state.messages.length > MAX_RETAINED_MESSAGES) {
+    state.messages = state.messages.slice(-MAX_RETAINED_MESSAGES);
   }
 }
 

@@ -38,6 +38,7 @@ test("README links the validation protocol", async () => {
   assert.match(readme, /trusted person/i);
   assert.match(readme, /deleted memory should not resurface/i);
   assert.match(readme, /older imports do not restore deleted memories/i);
+  assert.match(readme, /automatically keeps only the most recent 12 chat messages/i);
   assert.match(readme, /draft is cleared when memory changes/i);
   assert.match(readme, /minimized non-sensitive memory context/i);
   assert.match(readme, /type and label/i);
@@ -99,4 +100,11 @@ test("optimization notes track deleted memory tombstones", async () => {
 
   assert.match(notes, /deleted-memory tombstones/i);
   assert.match(notes, /older imports cannot resurrect deleted memories/i);
+});
+
+test("optimization notes track automatic raw chat retention cap", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /automatic raw chat retention cap/i);
+  assert.match(notes, /most recent 12 messages/i);
 });

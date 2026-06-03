@@ -20,7 +20,7 @@ npm test
 
 V1 stores conversation memory locally in the browser. There is no account system, family dashboard, continuous microphone, or cloud memory service.
 
-The prototype includes basic local-data controls: export the current record as JSON, import a previous export, trim older chat messages while keeping long-term memory, delete a single memory, or clear everything. Older imports do not restore deleted memories.
+The prototype includes basic local-data controls: export the current record as JSON, import a previous export, trim older chat messages while keeping long-term memory, delete a single memory, or clear everything. It automatically keeps only the most recent 12 chat messages, and older imports do not restore deleted memories.
 
 The "给家人报平安" control creates a local, editable update that the older adult can review and copy. It does not send anything automatically, does not create a family dashboard, and filters safety-sensitive or "do not mention" content out of the draft. It uses the current memory list instead of raw chat history, so a deleted memory should not resurface in a share draft. The draft is cleared when memory changes, imports run, or the record is reset.
 
