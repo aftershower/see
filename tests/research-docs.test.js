@@ -126,6 +126,7 @@ test("optimization notes track scam false-positive tuning", async () => {
   assert.match(notes, /shopping false positive/i);
   assert.match(notes, /routine government or benefits-office visits/i);
   assert.match(notes, /stranger asking for directions/i);
+  assert.match(notes, /forgotten phone password/i);
 });
 
 test("optimization notes track high-risk safety phrase expansion", async () => {
