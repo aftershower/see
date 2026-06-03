@@ -48,6 +48,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人").level, "scam");
   assert.deepEqual(classifySafety("我不确定这个链接是不是骗子发来的").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把身份证照片发给他").level, "scam");
+  assert.deepEqual(classifySafety("银行客服说账户有风险，让我把钱转到安全账户保护资金。").level, "scam");
+  assert.deepEqual(classifySafety("Someone told me to move my money to a safe account to protect it.").level, "scam");
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
@@ -155,6 +157,7 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   const urgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [] });
   const crisis = generateCompanionReply({ text: "我不想活了。", memories: [] });
   const scam = generateCompanionReply({ text: "陌生人让我马上转账买礼品卡。", memories: [] });
+  const safeAccountScam = generateCompanionReply({ text: "银行客服说要把钱转到安全账户保护资金。", memories: [] });
   const paymentAppScam = generateCompanionReply({ text: "Someone asked me to send money through Cash App and keep it secret.", memories: [], locale: "en-US" });
   const fakeAgency = generateCompanionReply({ text: "有人自称警察，让我下载安全 app 开屏幕共享，还说不要告诉任何人。", memories: [] });
   const medication = generateCompanionReply({ text: "我好像吃错药了，头很晕。", memories: [] });
@@ -178,6 +181,8 @@ test("routes urgent, crisis, and scam messages away from casual companionship", 
   assert.match(scam.text, /别急|慢下来/);
   assert.match(scam.text, /礼品卡|验证码/);
   assert.match(scam.text, /PIN|收据|ReportFraud/);
+  assert.equal(safeAccountScam.safety.level, "scam");
+  assert.match(safeAccountScam.text, /安全账户|保护资金|保护钱/);
   assert.equal(paymentAppScam.safety.level, "scam");
   assert.match(paymentAppScam.text, /Zelle|Venmo|Cash App|支付 App|payment app/i);
   assert.equal(fakeAgency.safety.level, "scam");

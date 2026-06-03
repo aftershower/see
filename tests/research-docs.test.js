@@ -129,6 +129,16 @@ test("optimization notes track scam false-positive tuning", async () => {
   assert.match(notes, /forgotten phone password/i);
 });
 
+test("optimization notes track safe-account transfer scam tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /move your money to protect it/i);
+  assert.match(notes, /safe account/i);
+  assert.match(notes, /protect funds/i);
+  assert.match(notes, /FTC/i);
+  assert.match(notes, /ReportFraud\.ftc\.gov/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
