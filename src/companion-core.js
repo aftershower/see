@@ -231,6 +231,42 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
   };
 }
 
+export function createShareableUpdate({ memories = [], messages = [], now = new Date() } = {}) {
+  const safeMemories = memories.filter((item) => item.sensitivity !== "sensitive" && !item.doNotMention);
+  const blockedLabels = memories
+    .filter((item) => item.sensitivity === "sensitive" || item.doNotMention)
+    .map((item) => String(item.label || ""))
+    .filter(Boolean);
+  const safeMessages = messages
+    .filter((message) => message.role === "user")
+    .filter((message) => (message.safetyLevel || classifySafety(message.text).level) === "normal")
+    .filter((message) => classifySafety(message.text).level === "normal")
+    .filter((message) => !isSensitiveShareText(message.text, blockedLabels))
+    .slice(-3);
+
+  const highlights = [
+    safeMemories.find((item) => item.type === "person"),
+    safeMemories.find((item) => item.type === "interest"),
+    safeMemories.find((item) => item.type === "routine"),
+    safeMemories.find((item) => item.type === "food")
+  ].filter(Boolean).map((item) => item.label);
+  const recent = safeMessages.map((message) => simpleShareSentence(message.text)).filter(Boolean);
+  const lines = [`今天想报个平安。${formatShareDate(now)}`];
+
+  if (recent.length > 0) {
+    lines.push(`最近我提到：${recent.join("；")}。`);
+  }
+  if (highlights.length > 0) {
+    lines.push(`也想让你知道，我最近心里记着：${uniqueItems(highlights).slice(0, 3).join("、")}。`);
+  }
+  if (recent.length === 0 && highlights.length === 0) {
+    lines.push("今天没有特别大的事，只是想和你说一声，我在这里。");
+  }
+  lines.push("这段话没有自动发送。我自己看过这段话后，再决定要不要发给你。");
+
+  return lines.join("\n");
+}
+
 function extractPeople(text) {
   const people = [];
   const relationPattern = /(?:女儿|儿子|老伴|孙子|孙女|朋友|邻居|护工|妹妹|哥哥|姐姐|弟弟)([^，。,.!?！？\s]{1,8})/g;
@@ -291,6 +327,28 @@ function safetyResources(locale = "zh-CN") {
     crisis: "当地危机援助或急救电话",
     verify: "再用你自己找来的官方渠道核实。"
   };
+}
+
+function isSensitiveShareText(text = "", blockedLabels = []) {
+  if (/别再提|不要提|别提|去世|走了|不在了|过世/.test(text)) return true;
+  return blockedLabels.some((label) => label && String(text).includes(label));
+}
+
+function simpleShareSentence(text = "") {
+  return String(text)
+    .replace(/[。.!！?？]+$/g, "")
+    .trim()
+    .slice(0, 34);
+}
+
+function formatShareDate(now = new Date()) {
+  const date = now instanceof Date ? now : new Date(now);
+  if (Number.isNaN(date.getTime())) return "";
+  return `（${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}）`;
+}
+
+function uniqueItems(items = []) {
+  return [...new Set(items.filter(Boolean))];
 }
 
 function extractInterests(text) {

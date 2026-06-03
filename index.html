@@ -35,6 +35,15 @@
         <button id="checkInButton" class="check-in-button" type="button"></button>
       </section>
 
+      <section class="panel-section share-section" aria-label="给家人报平安">
+        <p class="eyebrow">报平安</p>
+        <h2>给家人报平安</h2>
+        <button id="shareUpdateButton" class="check-in-button" type="button">生成近况</button>
+        <label class="sr-only" for="shareUpdateText">可复制近况</label>
+        <textarea id="shareUpdateText" class="share-output" rows="7" hidden></textarea>
+        <button id="copyUpdateButton" class="ghost-button share-copy-button" type="button" hidden>复制近况</button>
+      </section>
+
       <section id="privacyNotice" class="privacy-note" aria-label="隐私说明">
         <p class="eyebrow">隐私</p>
         <p class="privacy-copy">记忆保存在这台设备的浏览器里。你可以导出、清理旧聊天、删除单条记忆，也可以一键清空。</p>

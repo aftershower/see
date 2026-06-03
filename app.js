@@ -1,4 +1,5 @@
 import {
+  createShareableUpdate,
   generateCompanionReply,
   mergeMemories,
   planCheckIn
@@ -23,6 +24,9 @@ const exportButton = document.querySelector("#exportButton");
 const importButton = document.querySelector("#importButton");
 const importInput = document.querySelector("#importInput");
 const trimHistoryButton = document.querySelector("#trimHistoryButton");
+const shareUpdateButton = document.querySelector("#shareUpdateButton");
+const copyUpdateButton = document.querySelector("#copyUpdateButton");
+const shareUpdateText = document.querySelector("#shareUpdateText");
 const storageWarning = document.querySelector("#storageWarning");
 const renderedMessageIds = new Set();
 const MAX_RETAINED_MESSAGES = 12;
@@ -299,6 +303,32 @@ function trimHistory() {
   render();
 }
 
+function generateShareableUpdate() {
+  shareUpdateText.value = createShareableUpdate({
+    memories: state.memories,
+    messages: state.messages,
+    now: new Date()
+  });
+  shareUpdateText.hidden = false;
+  copyUpdateButton.hidden = false;
+  setStorageStatus("已生成近况。请先看一遍，再决定要不要发给家人。");
+}
+
+async function copyShareableUpdate() {
+  const text = shareUpdateText.value.trim();
+  if (!text) {
+    generateShareableUpdate();
+  }
+  try {
+    await navigator.clipboard.writeText(shareUpdateText.value);
+    setStorageStatus("已复制近况。");
+  } catch {
+    shareUpdateText.focus();
+    shareUpdateText.select();
+    setStorageStatus("复制失败。你可以手动选中文字再复制。", "error");
+  }
+}
+
 function setStorageStatus(message, tone = "info") {
   storageWarning.textContent = message;
   storageWarning.hidden = !message;
@@ -379,6 +409,8 @@ exportButton.addEventListener("click", exportState);
 importButton.addEventListener("click", () => importInput.click());
 importInput.addEventListener("change", importState);
 trimHistoryButton.addEventListener("click", trimHistory);
+shareUpdateButton.addEventListener("click", generateShareableUpdate);
+copyUpdateButton.addEventListener("click", copyShareableUpdate);
 
 resetButton.addEventListener("click", () => {
   const confirmed = window.confirm("要清空这次体验里的聊天和记忆吗？");

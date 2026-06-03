@@ -11,6 +11,7 @@
 - AARP's long-term-care AI guidance warns that AI tools for older adults need guardrails for errors, bias, privacy vulnerabilities, and overreliance. Source: https://www.aarp.org/pri/topics/ltss/artificial-intelligence-long-term-care/
 - Apple CloudKit private databases are user-owned iCloud storage: only the user can access private database content by default, it requires an iCloud account for writes, and it counts toward the user's iCloud quota. Source: https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase
 - Apple's Speech framework supports recognizing spoken words from recorded or live audio, which keeps a future native iOS path open for tap-to-start voice capture without committing the PWA to continuous listening. Source: https://developer.apple.com/documentation/speech/
+- MDN documents `navigator.clipboard.writeText()` as a browser Clipboard API method for writing text in secure contexts, which fits a user-click copy flow without adding a server-side sharing channel. Source: https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
 - UK official guidance lists 999 and 112 as national emergency numbers. Source: https://www.gov.uk/guidance/999-and-112-the-uks-national-emergency-numbers
 - Samaritans lists 116 123 as its UK/Ireland freephone support number. Source: https://www.samaritans.org/how-we-can-help/contact-samaritan/
 - Canada 9-8-8 is the national suicide crisis helpline. Source: https://988.ca/
@@ -46,6 +47,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - `verify` responses now include locale-aware official-channel examples, such as card-back bank phone numbers and `.gov` sites for US users, or official phone/branch/community channels for China users.
 - Locale safety profiles now include UK, Canada, and Australia emergency/crisis resources in addition to US, China, and a generic fallback.
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
+- A new "给家人报平安" flow creates a local, editable, user-copied update instead of a caregiver dashboard or automatic send. It rechecks candidate messages with safety routing and excludes urgent, crisis, scam, verify, support, sensitive, and "do not mention" content.
 
 ## Next Optimization Backlog
 
@@ -57,7 +59,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 2. Improve product validation:
    - run the validation protocol with 5 to 8 older adults
    - convert observed blockers into product changes
-   - keep caregiver/family summary sharing opt-in and older-adult controlled
+   - test whether older adults understand that "给家人报平安" is editable, copied by choice, and not sent automatically
 
 3. Strengthen local persistence:
    - implement IndexedDB only after pilot usage proves localStorage is too small or too blocking

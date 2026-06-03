@@ -11,6 +11,8 @@ test("validation protocol defines elder companion pilot measures", async () => {
   assert.match(protocol, /System Usability Scale|SUS/);
   assert.match(protocol, /consent/i);
   assert.match(protocol, /caregiver/i);
+  assert.match(protocol, /给家人报平安/);
+  assert.match(protocol, /not sent automatically/i);
   assert.match(protocol, /false positive/i);
   assert.match(protocol, /false negative/i);
   assert.match(protocol, /scam/i);

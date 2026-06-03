@@ -269,6 +269,34 @@ h2 {
   border-top: 4px solid var(--accent);
 }
 
+.share-section {
+  border-top: 4px solid var(--soft);
+}
+
+.share-output {
+  width: 100%;
+  min-height: 172px;
+  margin-top: 10px;
+  padding: 12px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.share-output[hidden],
+.share-copy-button[hidden] {
+  display: none;
+}
+
+.share-copy-button {
+  width: 100%;
+  margin-top: 8px;
+}
+
 .check-in-button {
   width: 100%;
   text-align: left;

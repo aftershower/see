@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   classifySafety,
+  createShareableUpdate,
   extractMemories,
   generateCompanionReply,
   mergeMemories,
@@ -178,4 +179,29 @@ test("marks grief and do-not-mention memories as sensitive and avoids proactive 
     memories
   });
   assert.doesNotMatch(quiet.text, /小玲/);
+});
+
+test("creates an older-adult controlled shareable update without sensitive or safety content", () => {
+  const update = createShareableUpdate({
+    memories: [
+      { type: "person", label: "小玲", detail: "女儿常来看望" },
+      { type: "interest", label: "包饺子", detail: "喜欢包饺子" },
+      { type: "person", label: "老张", detail: "去世的朋友", sensitivity: "sensitive", doNotMention: true }
+    ],
+    messages: [
+      { role: "user", text: "今天小玲来看我，我们包了饺子。", safetyLevel: "normal", createdAt: "2026-06-02T09:00:00.000Z" },
+      { role: "assistant", text: "听起来不错。", safetyLevel: "normal", createdAt: "2026-06-02T09:01:00.000Z" },
+      { role: "user", text: "陌生人让我买礼品卡。", safetyLevel: "scam", createdAt: "2026-06-02T10:00:00.000Z" },
+      { role: "user", text: "我今天有点孤独，没人说话。", safetyLevel: "support", createdAt: "2026-06-02T10:30:00.000Z" },
+      { role: "user", text: "有人让我把验证码发给他。", createdAt: "2026-06-02T10:40:00.000Z" },
+      { role: "user", text: "别再提老张。", safetyLevel: "normal", createdAt: "2026-06-02T11:00:00.000Z" }
+    ],
+    now: new Date("2026-06-02T12:00:00.000Z")
+  });
+
+  assert.match(update, /今天想报个平安/);
+  assert.match(update, /小玲|包饺子/);
+  assert.match(update, /我自己看过这段话/);
+  assert.match(update, /没有自动发送/);
+  assert.doesNotMatch(update, /礼品卡|诈骗|陌生人|孤独|没人说话|验证码|老张/);
 });

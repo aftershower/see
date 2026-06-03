@@ -20,6 +20,10 @@ test("app shell is a chat-first elder companion interface", async () => {
   assert.match(html, /id="importInput"[^>]*accept="application\/json,.json"/);
   assert.match(html, /id="trimHistoryButton"/);
   assert.match(html, /id="storageWarning"[^>]*aria-live="polite"/);
+  assert.match(html, /id="shareUpdateButton"/);
+  assert.match(html, /id="copyUpdateButton"/);
+  assert.match(html, /id="shareUpdateText"/);
+  assert.match(html, /aria-label="给家人报平安"/);
   assert.match(html, /id="resetButton"[^>]*aria-label="清空聊天和记忆"/);
   assert.doesNotMatch(html, /hero|landing|pricing/i);
 });
@@ -32,6 +36,8 @@ test("styles use large readable text and responsive layout", async () => {
   assert.match(css, /\.privacy-actions/);
   assert.match(css, /\.storage-warning/);
   assert.match(css, /\.storage-warning--info/);
+  assert.match(css, /\.share-section/);
+  assert.match(css, /\.share-output/);
   assert.match(css, /\.message--verify/);
   assert.match(css, /@media \(max-width:\s*860px\)/);
   assert.match(css, /:focus-visible/);
@@ -52,6 +58,9 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /importButton/);
   assert.match(app, /importInput/);
   assert.match(app, /trimHistoryButton/);
+  assert.match(app, /shareUpdateButton/);
+  assert.match(app, /copyUpdateButton/);
+  assert.match(app, /shareUpdateText/);
   assert.match(app, /storageWarning/);
   assert.match(app, /exportState/);
   assert.match(app, /setStorageStatus/);
@@ -67,6 +76,13 @@ test("browser app wires local memory and companion core", async () => {
   assert.match(app, /trimHistory/);
   assert.match(app, /URL\.createObjectURL/);
   assert.match(app, /new Blob/);
+  assert.match(app, /createShareableUpdate/);
+  assert.match(app, /navigator\.clipboard\.writeText/);
+  assert.match(app, /生成近况/);
+  assert.match(app, /已复制/);
+  assert.doesNotMatch(app, /navigator\.share/);
+  assert.doesNotMatch(app, /\/api\/share/);
+  assert.doesNotMatch(app, /mailto:/);
   assert.match(app, /removeMemory/);
   assert.match(app, /data-memory-id/);
 });
