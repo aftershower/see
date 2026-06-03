@@ -330,6 +330,34 @@ function safetyResources(locale = "zh-CN") {
       verify: "再用你自己找来的官方渠道核实，比如 .gov.au 官方网站、银行官网或卡背面的银行电话。"
     };
   }
+  if (normalized.startsWith("en-nz")) {
+    return {
+      emergency: "111",
+      crisis: "1737，或紧急时拨打 111",
+      verify: "再用你自己找来的官方渠道核实，比如 govt.nz 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
+  if (normalized.startsWith("en-ie")) {
+    return {
+      emergency: "999 或 112",
+      crisis: "Samaritans 116 123，或紧急时拨打 999/112",
+      verify: "再用你自己找来的官方渠道核实，比如 gov.ie 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
+  if (normalized.startsWith("en-sg")) {
+    return {
+      emergency: "995 或 999",
+      crisis: "Samaritans of Singapore 1767，或紧急时拨打 995/999",
+      verify: "再用你自己找来的官方渠道核实，比如 gov.sg 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
+  if (normalized.startsWith("en-in")) {
+    return {
+      emergency: "112",
+      crisis: "Tele MANAS 14416，或紧急时拨打 112",
+      verify: "再用你自己找来的官方渠道核实，比如 gov.in 官方网站、银行官网或卡背面的银行电话。"
+    };
+  }
   if (normalized.startsWith("zh-cn")) {
     return {
       emergency: "当地急救电话，比如 120",

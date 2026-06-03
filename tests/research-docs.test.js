@@ -39,3 +39,16 @@ test("storage migration notes define PWA and native persistence boundaries", asy
   assert.match(notes, /iCloud/i);
   assert.match(notes, /not iCloud sync/i);
 });
+
+test("optimization notes track expanded locale safety resources", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /New Zealand/);
+  assert.match(notes, /Ireland/);
+  assert.match(notes, /Singapore/);
+  assert.match(notes, /India/);
+  assert.match(notes, /1737/);
+  assert.match(notes, /116 123/);
+  assert.match(notes, /1767/);
+  assert.match(notes, /14416/);
+});

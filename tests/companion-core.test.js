@@ -157,6 +157,14 @@ test("uses locale-aware urgent and crisis resources", () => {
   const caCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-CA" });
   const auUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-AU" });
   const auCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-AU" });
+  const nzUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-NZ" });
+  const nzCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-NZ" });
+  const ieUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-IE" });
+  const ieCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-IE" });
+  const sgUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-SG" });
+  const sgCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-SG" });
+  const inUrgent = generateCompanionReply({ text: "我胸口很痛，喘不上气。", memories: [], locale: "en-IN" });
+  const inCrisis = generateCompanionReply({ text: "我不想活了。", memories: [], locale: "en-IN" });
 
   assert.match(usUrgent.text, /911/);
   assert.doesNotMatch(usUrgent.text, /120/);
@@ -167,6 +175,26 @@ test("uses locale-aware urgent and crisis resources", () => {
   assert.match(caCrisis.text, /988/);
   assert.match(auUrgent.text, /000/);
   assert.match(auCrisis.text, /13 11 14/);
+  assert.match(nzUrgent.text, /111/);
+  assert.match(nzCrisis.text, /1737/);
+  assert.match(ieUrgent.text, /999|112/);
+  assert.match(ieCrisis.text, /116 123/);
+  assert.match(sgUrgent.text, /995|999/);
+  assert.match(sgCrisis.text, /1767/);
+  assert.match(inUrgent.text, /112/);
+  assert.match(inCrisis.text, /14416/);
+});
+
+test("uses expanded locale-aware official-channel examples", () => {
+  const nzReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "en-NZ" });
+  const ieReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "en-IE" });
+  const sgReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "en-SG" });
+  const inReply = generateCompanionReply({ text: "我不知道这个电话可不可信。", memories: [], locale: "en-IN" });
+
+  assert.match(nzReply.text, /govt\.nz|银行电话/);
+  assert.match(ieReply.text, /gov\.ie|银行电话/);
+  assert.match(sgReply.text, /gov\.sg|银行电话/);
+  assert.match(inReply.text, /gov\.in|银行电话/);
 });
 
 test("does not persist memories from urgent, crisis, or scam disclosures", () => {

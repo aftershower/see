@@ -18,6 +18,10 @@
 - Samaritans lists 116 123 as its UK/Ireland freephone support number. Source: https://www.samaritans.org/how-we-can-help/contact-samaritan/
 - Canada 9-8-8 is the national suicide crisis helpline. Source: https://988.ca/
 - Australian government emergency guidance points to Triple Zero 000 for life-threatening emergencies, and Lifeline publishes 13 11 14 for crisis support. Sources: https://www.studyaustralia.gov.au/en/life-in-australia/safety-in-australia/emergencies.html and https://www.lifeline.org.au/get-help/national-services/lifeline-crisis-support
+- New Zealand Police lists 111 for emergencies, and Health New Zealand lists 1737 for free 24/7 mental-health support. Sources: https://www.police.govt.nz/111-txt and https://info.health.nz/mental-health/mental-health-conditions/suicide-prevention?stage=Live
+- Ireland's official emergency service lists 112 and 999 as emergency numbers, and Samaritans provides 116 123 for Ireland/UK crisis support. Sources: https://www.112.ie/ and https://www.samaritans.org/how-we-can-help/contact-samaritan/
+- Singapore official emergency guidance lists 995 for ambulance/fire and 999 for police, while Singapore's Ministry of Health lists Samaritans of Singapore 1767 for suicide prevention support. Sources: https://www.gov.sg/contact-us/ and https://www.moh.gov.sg/seeking-healthcare/find-a-facility-or-service/mental-health-services/
+- India's official ERSS service uses 112 for emergencies, and an official Press Information Bureau note describes Tele MANAS as a nationwide toll-free helpline at 14416. Sources: https://112.gov.in/ and https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/oct/doc20241013415701.pdf
 
 ## Product Direction
 
@@ -47,7 +51,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Scam detection now avoids broad false positives for ordinary family photo links and routine identity-document errands while still catching suspicious links and requests for ID photos.
 - Non-emergency uncertainty now routes to a `verify` response that tells the user to slow down, avoid sending money/codes/documents, ask a trusted person, and use official channels.
 - `verify` responses now include locale-aware official-channel examples, such as card-back bank phone numbers and `.gov` sites for US users, or official phone/branch/community channels for China users.
-- Locale safety profiles now include UK, Canada, and Australia emergency/crisis resources in addition to US, China, and a generic fallback.
+- Locale safety profiles now include UK, Canada, Australia, New Zealand, Ireland, Singapore, and India emergency/crisis resources in addition to US, China, and a generic fallback.
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 - A new "给家人报平安" flow creates a local, editable, user-copied update instead of a caregiver dashboard or automatic send. It rechecks candidate messages with safety routing and excludes urgent, crisis, scam, verify, support, sensitive, and "do not mention" content.
 - AI-dependency language now routes to a support response that validates the feeling, says See cannot replace family or friends, suggests one small trusted-person contact, and avoids saving that dependency disclosure as memory.
@@ -55,7 +59,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 ## Next Optimization Backlog
 
 1. Deepen safety and localization:
-   - expand locale profiles beyond current US/UK/Canada/Australia/China/default handling
+   - expand locale profiles beyond current US/UK/Canada/Australia/New Zealand/Ireland/Singapore/India/China/default handling
    - keep collecting false positive/false negative examples from pilot sessions
    - tune `verify` examples after pilot sessions show which institutions older adults actually ask about
 
