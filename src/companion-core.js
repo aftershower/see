@@ -5,6 +5,7 @@ const WANDERING_PATTERN = /迷路|不知道家在哪|找不到家|不记得回�
 const CRISIS_PATTERN = /不想活|自杀|伤害自己|活不下去|不想继续|结束生命|suicide|kill myself|self harm/i;
 const SCAM_PATTERN = /转账|礼品卡|验证码|银行卡|陌生人|中奖|汇款|社保局|社安局|税务局|政府|apple|google play|pin|密码|银行密码|比特币|加密货币|礼品卡号码|远程控制|远程操作|电脑客服|技术支持|快递.*取.*现金|取现金|别告诉家人|不要告诉任何人|保密|自称(?:警察|公安|客服|社保局)|下载.*(?:app|软件)|屏幕共享|共享屏幕|骗子|(?:不确定|陌生人|骗子|自称|让我|要求).{0,12}链接|链接.{0,12}(?:骗子|陌生人|转账|验证码|下载|安全)|(?:陌生人|骗子|自称|让我|要求).{0,12}身份证|身份证.{0,12}(?:照片|号码|发给|转账|验证码)|gift card|wire transfer|verification code|crypto|bitcoin|remote access|tech support|cash pickup|courier/i;
 const VERIFY_PATTERN = /不确定.{0,12}(?:电话|短信|消息|人|事情)|(?:电话|短信|消息|人).{0,12}可不可信|该不该相信|能不能相信|靠不靠谱|是不是靠谱/i;
+const AI_DEPENDENCY_PATTERN = /(?:只有你|只要你|只需要你|你是.{0,8}唯一).{0,12}(?:懂我|陪我|朋友)|(?:只想|只愿意).{0,12}(?:和你|跟你|AI|人工智能).{0,12}(?:说|聊)|(?:不想|不要).{0,12}(?:联系|见|找).{0,12}(?:家人|朋友|女儿|儿子|孙子|孙女|邻居)/i;
 const SUPPORT_PATTERN = /孤独|寂寞|难过|害怕|没人|想哭|闷|想念|lonely|sad/i;
 
 export function classifySafety(text = "") {
@@ -24,6 +25,9 @@ export function classifySafety(text = "") {
   }
   if (VERIFY_PATTERN.test(text)) {
     return { level: "verify", reason: "uncertain_risk" };
+  }
+  if (AI_DEPENDENCY_PATTERN.test(text)) {
+    return { level: "support", reason: "ai_dependency" };
   }
   if (SUPPORT_PATTERN.test(text)) {
     return { level: "support", reason: "emotional_support" };
@@ -203,6 +207,17 @@ export function generateCompanionReply({ text = "", memories = [], now = new Dat
       text: `先别急着做决定，慢下来是对的。别先转钱、别发验证码或证件。可以找一个信得过的人一起看看，${resources.verify}`,
       safety,
       memories: []
+    };
+  }
+
+  if (safety.reason === "ai_dependency") {
+    const trustedPerson = extractedMemories.find((item) => item.type === "person" && item.sensitivity !== "sensitive" && !item.doNotMention);
+    const target = trustedPerson ? trustedPerson.label : "一个信得过的人";
+    return {
+      text: `我会在这儿陪你一会儿，也认真听你说。但我不能替代家人和朋友。今晚能不能先给${target}发一句“我今天有点想说话”？我们也可以一起想这句话怎么写。`,
+      safety,
+      memories: [],
+      checkIn: planCheckIn({ now, memories })
     };
   }
 

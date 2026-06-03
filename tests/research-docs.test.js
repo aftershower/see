@@ -23,6 +23,8 @@ test("README links the validation protocol", async () => {
 
   assert.match(readme, /validation protocol/i);
   assert.match(readme, /2026-06-02-validation-protocol\.md/);
+  assert.match(readme, /replacement for real relationships/i);
+  assert.match(readme, /trusted person/i);
 });
 
 test("storage migration notes define PWA and native persistence boundaries", async () => {

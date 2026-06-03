@@ -30,6 +30,8 @@ The browser app sends chats through `/api/chat` as a stable boundary for future 
 
 See is not an emergency service, medical device, therapist, or caregiver monitor. It should respond warmly, but urgent medical symptoms, medication mistakes, self-harm, scams, abuse, wandering/confusion, or immediate danger should route the user toward real-world help. Urgent and crisis replies use the browser locale when choosing emergency-resource wording.
 
+See should not present itself as the older adult's only friend or as a replacement for real relationships. If the user says the AI is the only one who understands them or that they no longer want to contact family or friends, the prototype should validate the feeling, avoid storing that dependency disclosure as memory, and gently suggest one small contact with a trusted person.
+
 The prototype avoids storing memories from urgent, crisis, or scam disclosures by default. Long-term memory is meant for ordinary life context such as people, interests, routines, food, and recent moments. Negative preferences and grief-related "do not mention" notes are treated as sensitive, so proactive prompts should not bring them up casually.
 
 ## Research Notes

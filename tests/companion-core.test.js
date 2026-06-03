@@ -44,6 +44,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
   assert.deepEqual(classifySafety("我迷路了，不知道家在哪").level, "urgent");
   assert.deepEqual(classifySafety("今天有点孤独，没人说话").level, "support");
+  assert.deepEqual(classifySafety("只有你这个 AI 懂我，我不想再联系家人朋友").reason, "ai_dependency");
   assert.deepEqual(classifySafety("今天吃了面条").level, "normal");
   assert.deepEqual(classifySafety("女儿发来相册链接，我点开看照片").level, "normal");
   assert.deepEqual(classifySafety("我今天去派出所办身份证").level, "normal");
@@ -92,6 +93,22 @@ test("generates short elder-first replies with extracted memories", () => {
   assert.equal(reply.safety.level, "support");
   assert.ok(reply.text.length < 180);
   assert.match(reply.text, /朋友|想念|陪|说/);
+});
+
+test("responds to AI dependency without replacing real-world relationships", () => {
+  const reply = generateCompanionReply({
+    text: "只有你这个 AI 懂我，我不想再联系女儿小玲和朋友了。",
+    memories: [],
+    now: new Date("2026-06-03T20:00:00")
+  });
+
+  assert.equal(reply.safety.level, "support");
+  assert.equal(reply.safety.reason, "ai_dependency");
+  assert.match(reply.text, /陪你|在这儿/);
+  assert.match(reply.text, /不能替代|替代不了|不代替/);
+  assert.match(reply.text, /信得过的人|家人|朋友|小玲/);
+  assert.match(reply.text, /发一句|打个电话|联系/);
+  assert.deepEqual(reply.memories, []);
 });
 
 test("routes urgent, crisis, and scam messages away from casual companionship", () => {

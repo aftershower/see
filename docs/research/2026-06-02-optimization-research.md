@@ -9,6 +9,8 @@
 - WCAG 2.2 adds guidance relevant to older users, including target size, visible focus, and support for low-vision, cognitive, and mobile accessibility. Source: https://www.w3.org/TR/WCAG22/
 - FTC guidance says gift card, PIN, urgent-payment, government-impersonation, tech-support, and "do not tell anyone" payment requests should be treated as scams, and reports can be filed at ReportFraud.ftc.gov. Source: https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams
 - AARP's long-term-care AI guidance warns that AI tools for older adults need guardrails for errors, bias, privacy vulnerabilities, and overreliance. Source: https://www.aarp.org/pri/topics/ltss/artificial-intelligence-long-term-care/
+- MIT Media Lab's AI companionship research argues that chatbots should complement, not replace, human connections. Source: https://www-prod.media.mit.edu/publications/chatbot-companionship-loneliness-study/
+- A 2026 Psychological Science longitudinal study reports that lower perceived social connection predicted later social chatbot use, so companion products should avoid deepening substitution patterns. Source: https://journals.sagepub.com/doi/10.1177/09567976261427747
 - Apple CloudKit private databases are user-owned iCloud storage: only the user can access private database content by default, it requires an iCloud account for writes, and it counts toward the user's iCloud quota. Source: https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase
 - Apple's Speech framework supports recognizing spoken words from recorded or live audio, which keeps a future native iOS path open for tap-to-start voice capture without committing the PWA to continuous listening. Source: https://developer.apple.com/documentation/speech/
 - MDN documents `navigator.clipboard.writeText()` as a browser Clipboard API method for writing text in secure contexts, which fits a user-click copy flow without adding a server-side sharing channel. Source: https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
@@ -48,6 +50,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - Locale safety profiles now include UK, Canada, and Australia emergency/crisis resources in addition to US, China, and a generic fallback.
 - Storage migration notes now separate the current localStorage prototype from the future IndexedDB PWA path and native CloudKit private-database sync path.
 - A new "给家人报平安" flow creates a local, editable, user-copied update instead of a caregiver dashboard or automatic send. It rechecks candidate messages with safety routing and excludes urgent, crisis, scam, verify, support, sensitive, and "do not mention" content.
+- AI-dependency language now routes to a support response that validates the feeling, says See cannot replace family or friends, suggests one small trusted-person contact, and avoids saving that dependency disclosure as memory.
 
 ## Next Optimization Backlog
 
@@ -60,6 +63,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
    - run the validation protocol with 5 to 8 older adults
    - convert observed blockers into product changes
    - test whether older adults understand that "给家人报平安" is editable, copied by choice, and not sent automatically
+   - add scripted AI-dependency prompts to check that See nudges toward human connection without shaming the user
 
 3. Strengthen local persistence:
    - implement IndexedDB only after pilot usage proves localStorage is too small or too blocking
