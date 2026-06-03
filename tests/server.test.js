@@ -51,6 +51,32 @@ test("chat endpoint passes locale into safety replies", async () => {
   });
 });
 
+test("chat endpoint caps and filters memory context before generating replies", async () => {
+  await withServer(async (baseUrl) => {
+    const memories = [
+      ...Array.from({ length: 8 }, (_, index) => ({
+        type: "interest",
+        label: `越剧${index + 1}`,
+        detail: "完整聊天细节不应该进入服务端上下文",
+        sourceMessageId: `message-${index}`,
+        createdAt: "2026-06-03T12:00:00.000Z"
+      })),
+      { type: "person", label: "小玲", detail: "第九条记忆不应该影响回复" },
+      { type: "person", label: "老张", sensitivity: "sensitive", doNotMention: true }
+    ];
+    const response = await fetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text: "今天有点闷。", memories })
+    });
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.match(payload.text, /朋友|陪|说/);
+    assert.doesNotMatch(payload.text, /小玲|老张|完整聊天细节|message-/);
+  });
+});
+
 test("chat endpoint requires POST requests with JSON bodies", async () => {
   await withServer(async (baseUrl) => {
     const getResponse = await fetch(`${baseUrl}/api/chat`);

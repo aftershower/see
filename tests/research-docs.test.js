@@ -93,6 +93,9 @@ test("optimization notes track companion API context minimization", async () => 
   assert.match(notes, /minimized non-sensitive memory context/i);
   assert.match(notes, /type and label only/i);
   assert.match(notes, /does not include detail/i);
+  assert.match(notes, /server-side/i);
+  assert.match(notes, /maximum of 8/i);
+  assert.match(notes, /OWASP API Security Top 10/i);
 });
 
 test("optimization notes track deleted memory tombstones", async () => {

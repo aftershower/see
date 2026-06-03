@@ -27,6 +27,7 @@ const publicPaths = new Set([
   "/src/companion-core.js",
   "/src/local-data.js"
 ]);
+const MAX_COMPANION_MEMORY_CONTEXT = 8;
 
 export function createServer() {
   return http.createServer(async (request, response) => {
@@ -47,7 +48,7 @@ export function createServer() {
         const body = await readJson(request);
         return sendJson(response, 200, generateCompanionReply({
           text: body.text || "",
-          memories: Array.isArray(body.memories) ? body.memories : [],
+          memories: sanitizeCompanionMemories(body.memories),
           locale: body.locale || "zh-CN"
         }));
       }
@@ -63,6 +64,18 @@ export function createServer() {
       });
     }
   });
+}
+
+function sanitizeCompanionMemories(memories) {
+  if (!Array.isArray(memories)) return [];
+  return memories
+    .filter((item) => item && item.sensitivity !== "sensitive" && !item.doNotMention)
+    .map((item) => ({
+      type: typeof item.type === "string" ? item.type.trim() : "",
+      label: typeof item.label === "string" ? item.label.trim() : ""
+    }))
+    .filter((item) => item.type && item.label)
+    .slice(0, MAX_COMPANION_MEMORY_CONTEXT);
 }
 
 async function serveStatic(pathname, response) {
