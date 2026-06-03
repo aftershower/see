@@ -31,6 +31,23 @@ test("normalizes imported local data while rejecting invalid exports", () => {
   assert.throws(() => normalizeImportedState({ messages: [{ role: "assistant", text: "hi" }] }), /invalid/i);
 });
 
+test("normalizes imported memories by trimming labels and dropping blank records", () => {
+  const normalized = normalizeImportedState({
+    messages: [
+      { id: "m1", role: "assistant", text: "你好", createdAt: "2026-06-02T10:00:00.000Z" }
+    ],
+    memories: [
+      { id: "blank-label", type: "person", label: "   ", detail: "ignore" },
+      { id: "blank-type", type: "   ", label: "小玲", detail: "ignore" },
+      { id: "trimmed", type: " person ", label: " 小玲 ", detail: "女儿" }
+    ]
+  }, { createId: (prefix) => `${prefix}-fallback` });
+
+  assert.equal(normalized.memories.length, 1);
+  assert.equal(normalized.memories[0].type, "person");
+  assert.equal(normalized.memories[0].label, "小玲");
+});
+
 test("detects when an imported export is older than current local messages", () => {
   const currentState = {
     messages: [

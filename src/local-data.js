@@ -26,8 +26,11 @@ export function normalizeImportedState(imported, options = {}) {
       .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
       .map((item) => ({
         ...item,
+        type: item.type.trim(),
+        label: item.label.trim(),
         id: typeof item.id === "string" ? item.id : createId("memory")
-      })),
+      }))
+      .filter((item) => item.type && item.label),
     checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null,
     deletedMemoryKeys: normalizeDeletedMemoryKeys(imported.deletedMemoryKeys)
   };
