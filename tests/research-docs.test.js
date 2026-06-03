@@ -210,6 +210,16 @@ test("optimization notes track utility shutoff scam tuning", async () => {
   assert.match(notes, /FTC/i);
 });
 
+test("optimization notes track contextual scam false-positive tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /refund false positive/i);
+  assert.match(notes, /bitcoin|crypto/i);
+  assert.match(notes, /QR code/i);
+  assert.match(notes, /tech support/i);
+  assert.match(notes, /FTC/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 

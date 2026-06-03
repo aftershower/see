@@ -60,6 +60,10 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("Someone from Social Security said my SSN is suspended and I will be arrested unless I verify my Social Security number.").level, "scam");
   assert.deepEqual(classifySafety("A caller from SSA said there is a warrant and I must pay with gift cards to keep my benefits.").level, "scam");
   assert.deepEqual(classifySafety("The electric company said my power will be shut off today unless I take a barcode to Walgreens to pay.").level, "scam");
+  assert.deepEqual(classifySafety("A caller said I got a refund and needs remote access to my computer.").level, "scam");
+  assert.deepEqual(classifySafety("Someone told me to pay an upfront fee with bitcoin to unlock my prize.").level, "scam");
+  assert.deepEqual(classifySafety("A traffic ticket text told me to scan a QR code and enter my credit card today.").level, "scam");
+  assert.deepEqual(classifySafety("Tech support called and said I must install remote access and pay with a gift card.").level, "scam");
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
@@ -102,6 +106,10 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("I logged in to ssa.gov to check my benefits.").level, "normal");
   assert.deepEqual(classifySafety("I paid my electric bill online using the website printed on my paper bill.").level, "normal");
   assert.deepEqual(classifySafety("The water company mailed me a notice about a payment plan.").level, "normal");
+  assert.deepEqual(classifySafety("The store gave me a refund for a broken toaster.").level, "normal");
+  assert.deepEqual(classifySafety("I read an article about bitcoin today.").level, "normal");
+  assert.deepEqual(classifySafety("My grandson showed me how QR codes work at the museum.").level, "normal");
+  assert.deepEqual(classifySafety("I called tech support for my printer warranty.").level, "normal");
   assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把银行密码告诉他。").level, "scam");
 });
