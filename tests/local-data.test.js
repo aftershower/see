@@ -16,7 +16,8 @@ test("normalizes imported local data while rejecting invalid exports", () => {
       { id: "person-xiaoling", type: "person", label: "小玲", detail: "女儿" },
       { type: "broken", detail: "missing label" }
     ],
-    checkIn: { text: "晚上好", slot: "evening" }
+    checkIn: { text: "晚上好", slot: "evening" },
+    deletedMemoryKeys: ["person:小玲", 123, ""]
   }, { createId: (prefix) => `${prefix}-fallback`, now: () => "2026-06-02T12:00:00.000Z" });
 
   assert.equal(normalized.messages.length, 1);
@@ -24,6 +25,7 @@ test("normalizes imported local data while rejecting invalid exports", () => {
   assert.equal(normalized.memories.length, 1);
   assert.equal(normalized.memories[0].label, "小玲");
   assert.equal(normalized.checkIn.text, "晚上好");
+  assert.deepEqual(normalized.deletedMemoryKeys, ["person:小玲"]);
 
   assert.throws(() => normalizeImportedState({ messages: [], memories: [] }), /no messages/i);
   assert.throws(() => normalizeImportedState({ messages: [{ role: "assistant", text: "hi" }] }), /invalid/i);
@@ -105,4 +107,28 @@ test("preserves conservative privacy flags when imported memories merge", () => 
   assert.equal(xiaoling.sensitivity, "sensitive");
   assert.equal(xiaoling.doNotMention, true);
   assert.equal(xiaoling.detail, "女儿今天来过");
+});
+
+test("does not resurrect locally deleted memories from older imports", () => {
+  const currentState = {
+    messages: [
+      { id: "m-current", role: "user", text: "我删掉了小玲", createdAt: "2026-06-02T12:00:00.000Z" }
+    ],
+    memories: [],
+    deletedMemoryKeys: ["person:小玲"]
+  };
+  const importedState = {
+    messages: [
+      { id: "m-old", role: "user", text: "小玲来看我", createdAt: "2026-06-01T12:00:00.000Z" }
+    ],
+    memories: [
+      { id: "person-xiaoling-old", type: "person", label: "小玲", detail: "旧导出里的女儿", confidence: 0.7, updatedAt: "2026-06-01T12:00:00.000Z" }
+    ],
+    deletedMemoryKeys: []
+  };
+
+  const merged = mergeLocalDataStates(currentState, importedState);
+
+  assert.equal(merged.memories.some((item) => item.type === "person" && item.label === "小玲"), false);
+  assert.deepEqual(merged.deletedMemoryKeys, ["person:小玲"]);
 });

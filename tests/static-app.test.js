@@ -93,6 +93,11 @@ test("browser app wires local memory and companion core", async () => {
   assert.doesNotMatch(app, /mailto:/);
   assert.match(app, /removeMemory/);
   assert.match(app, /function removeMemory[\s\S]*clearShareDraft/);
+  assert.match(app, /deletedMemoryKeys/);
+  assert.match(app, /rememberDeletedMemory/);
+  assert.match(app, /memoryTombstoneKey/);
+  assert.match(app, /deletedMemoryKeys:\s*state\.deletedMemoryKeys/);
+  assert.match(app, /state\.deletedMemoryKeys\s*=\s*nextState\.deletedMemoryKeys/);
   assert.match(app, /function applyImportedState[\s\S]*clearShareDraft/);
   assert.match(app, /resetButton\.addEventListener[\s\S]*clearShareDraft/);
   assert.match(app, /data-memory-id/);

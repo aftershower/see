@@ -37,6 +37,7 @@ test("README links the validation protocol", async () => {
   assert.match(readme, /replacement for real relationships/i);
   assert.match(readme, /trusted person/i);
   assert.match(readme, /deleted memory should not resurface/i);
+  assert.match(readme, /older imports do not restore deleted memories/i);
   assert.match(readme, /draft is cleared when memory changes/i);
   assert.match(readme, /minimized non-sensitive memory context/i);
   assert.match(readme, /type and label/i);
@@ -91,4 +92,11 @@ test("optimization notes track companion API context minimization", async () => 
   assert.match(notes, /minimized non-sensitive memory context/i);
   assert.match(notes, /type and label only/i);
   assert.match(notes, /does not include detail/i);
+});
+
+test("optimization notes track deleted memory tombstones", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /deleted-memory tombstones/i);
+  assert.match(notes, /older imports cannot resurrect deleted memories/i);
 });

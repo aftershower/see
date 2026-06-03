@@ -41,6 +41,7 @@ function defaultState() {
       createdAt: new Date().toISOString()
     }],
     memories: [],
+    deletedMemoryKeys: [],
     checkIn: null
   };
 }
@@ -53,6 +54,7 @@ function loadState() {
     return {
       messages: Array.isArray(parsed.messages) && parsed.messages.length > 0 ? parsed.messages : defaultState().messages,
       memories: Array.isArray(parsed.memories) ? parsed.memories : [],
+      deletedMemoryKeys: normalizeDeletedMemoryKeys(parsed.deletedMemoryKeys),
       checkIn: parsed.checkIn || null
     };
   } catch {
@@ -91,6 +93,7 @@ async function handleUserText(text) {
 
   const reply = await requestCompanionReply(trimmed);
   state.memories = mergeMemories(state.memories, reply.memories || []);
+  forgetTombstonesForActiveMemories();
   clearShareDraft();
   addMessage("assistant", reply.text, reply.safety?.level || "normal");
   state.checkIn = reply.checkIn || planCheckIn({ memories: state.memories });
@@ -222,6 +225,8 @@ function renderMemories() {
 }
 
 function removeMemory(memoryId) {
+  const removed = state.memories.find((item) => item.id === memoryId);
+  rememberDeletedMemory(removed);
   state.memories = state.memories.filter((item) => item.id !== memoryId);
   state.checkIn = planCheckIn({ memories: state.memories, lastMessageAt: latestUserMessageAt() });
   const saved = saveState();
@@ -235,6 +240,7 @@ function exportState() {
     exportedAt: new Date().toISOString(),
     messages: state.messages,
     memories: state.memories,
+    deletedMemoryKeys: state.deletedMemoryKeys,
     checkIn: state.checkIn
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -285,6 +291,7 @@ function applyImportedState(imported, options = {}) {
 
   state.messages = nextState.messages;
   state.memories = nextState.memories;
+  state.deletedMemoryKeys = nextState.deletedMemoryKeys || [];
   state.checkIn = nextState.checkIn;
   renderedMessageIds.clear();
   for (const node of messagesEl.querySelectorAll("[data-message-id]")) {
@@ -311,6 +318,28 @@ function trimHistory() {
     return;
   }
   render();
+}
+
+function rememberDeletedMemory(memory) {
+  const key = memoryTombstoneKey(memory);
+  if (key && !state.deletedMemoryKeys.includes(key)) {
+    state.deletedMemoryKeys.push(key);
+  }
+}
+
+function forgetTombstonesForActiveMemories() {
+  const activeKeys = new Set(state.memories.map(memoryTombstoneKey).filter(Boolean));
+  state.deletedMemoryKeys = state.deletedMemoryKeys.filter((key) => !activeKeys.has(key));
+}
+
+function memoryTombstoneKey(memory = {}) {
+  if (!memory.type || !memory.label) return "";
+  return `${memory.type}:${String(memory.label).trim().toLowerCase()}`;
+}
+
+function normalizeDeletedMemoryKeys(keys = []) {
+  if (!Array.isArray(keys)) return [];
+  return [...new Set(keys.filter((key) => typeof key === "string" && key.trim()).map((key) => key.trim().toLowerCase()))];
 }
 
 function generateShareableUpdate() {
@@ -437,6 +466,7 @@ resetButton.addEventListener("click", () => {
   const fresh = defaultState();
   state.messages = fresh.messages;
   state.memories = fresh.memories;
+  state.deletedMemoryKeys = fresh.deletedMemoryKeys;
   state.checkIn = fresh.checkIn;
   const saved = saveState();
   render();

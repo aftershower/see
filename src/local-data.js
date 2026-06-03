@@ -28,7 +28,8 @@ export function normalizeImportedState(imported, options = {}) {
         ...item,
         id: typeof item.id === "string" ? item.id : createId("memory")
       })),
-    checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null
+    checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null,
+    deletedMemoryKeys: normalizeDeletedMemoryKeys(imported.deletedMemoryKeys)
   };
 }
 
@@ -39,10 +40,19 @@ export function needsImportConflictConfirmation(currentState, imported) {
 }
 
 export function mergeLocalDataStates(currentState = {}, importedState = {}) {
+  const deletedMemoryKeys = normalizeDeletedMemoryKeys([
+    ...(currentState.deletedMemoryKeys || []),
+    ...(importedState.deletedMemoryKeys || [])
+  ]);
+  const deletedMemoryKeySet = new Set(deletedMemoryKeys);
+  const currentMemories = (currentState.memories || []).filter((item) => !deletedMemoryKeySet.has(memoryKey(item)));
+  const importedMemories = (importedState.memories || []).filter((item) => !deletedMemoryKeySet.has(memoryKey(item)));
+
   return {
     messages: mergeMessages(currentState.messages || [], importedState.messages || []),
-    memories: mergeMemoryItems(currentState.memories || [], importedState.memories || []),
-    checkIn: currentState.checkIn || importedState.checkIn || null
+    memories: mergeMemoryItems(currentMemories, importedMemories),
+    checkIn: currentState.checkIn || importedState.checkIn || null,
+    deletedMemoryKeys
   };
 }
 
@@ -59,11 +69,20 @@ function mergeMemoryItems(currentMemories, importedMemories) {
   const byKey = new Map();
   for (const item of [...importedMemories, ...currentMemories]) {
     if (!item || typeof item.label !== "string" || typeof item.type !== "string") continue;
-    const key = `${item.type}:${String(item.label).trim().toLowerCase()}`;
+    const key = memoryKey(item);
     const previous = byKey.get(key);
     byKey.set(key, previous ? mergeMemoryItem(previous, item) : item);
   }
   return [...byKey.values()].sort((a, b) => String(a.type).localeCompare(String(b.type)));
+}
+
+function normalizeDeletedMemoryKeys(keys = []) {
+  if (!Array.isArray(keys)) return [];
+  return [...new Set(keys.filter((key) => typeof key === "string" && key.trim()).map((key) => key.trim().toLowerCase()))];
+}
+
+function memoryKey(item = {}) {
+  return `${item.type}:${String(item.label || "").trim().toLowerCase()}`;
 }
 
 function mergeMemoryItem(previous, next) {
