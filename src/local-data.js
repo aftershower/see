@@ -31,10 +31,10 @@ export function normalizeMessageItems(messages = [], options = {}) {
     const text = item.text.trim();
     if (!text) return items;
     items.push({
-      id: typeof item.id === "string" ? item.id : createId(item.role),
+      id: typeof item.id === "string" && item.id.trim() ? item.id.trim() : createId(item.role),
       role: item.role,
       text,
-      safetyLevel: item.safetyLevel || "normal",
+      safetyLevel: normalizeSafetyLevel(item.safetyLevel),
       createdAt: item.createdAt || now()
     });
     return items;
@@ -44,15 +44,31 @@ export function normalizeMessageItems(messages = [], options = {}) {
 export function normalizeMemoryItems(memories = [], options = {}) {
   const createId = options.createId || ((prefix) => `${prefix}-${Date.now()}`);
   if (!Array.isArray(memories)) return [];
-  return memories
-    .filter((item) => item && typeof item.label === "string" && typeof item.type === "string")
-    .map((item) => ({
-      ...item,
-      type: item.type.trim(),
-      label: item.label.trim(),
-      id: typeof item.id === "string" ? item.id : createId("memory")
-    }))
-    .filter((item) => item.type && item.label);
+  return memories.reduce((items, item) => {
+    if (!item || typeof item.label !== "string" || typeof item.type !== "string") return items;
+    const type = item.type.trim();
+    const label = item.label.trim();
+    if (!type || !label) return items;
+
+    const doNotMention = normalizeOptionalBoolean(item.doNotMention);
+    const sensitivity = doNotMention === true ? "sensitive" : normalizeSensitivity(item.sensitivity);
+    const normalized = {
+      id: typeof item.id === "string" && item.id.trim() ? item.id.trim() : createId("memory"),
+      type,
+      label
+    };
+
+    addStringField(normalized, "detail", item.detail);
+    if (Number.isFinite(item.confidence)) normalized.confidence = item.confidence;
+    if (sensitivity) normalized.sensitivity = sensitivity;
+    if (doNotMention !== null) normalized.doNotMention = doNotMention;
+    addPolarityField(normalized, item.polarity);
+    addStringField(normalized, "sourceMessageId", item.sourceMessageId);
+    addStringField(normalized, "createdAt", item.createdAt);
+    addStringField(normalized, "updatedAt", item.updatedAt);
+    items.push(normalized);
+    return items;
+  }, []);
 }
 
 export function normalizeCheckIn(checkIn) {
@@ -114,6 +130,39 @@ function mergeMemoryItems(currentMemories, importedMemories) {
 function normalizeDeletedMemoryKeys(keys = []) {
   if (!Array.isArray(keys)) return [];
   return [...new Set(keys.filter((key) => typeof key === "string" && key.trim()).map((key) => key.trim().toLowerCase()))];
+}
+
+function addStringField(target, field, value) {
+  if (typeof value !== "string") return;
+  const trimmed = value.trim();
+  if (trimmed) target[field] = trimmed;
+}
+
+function addPolarityField(target, value) {
+  if (value === "negative" || value === "neutral") {
+    target.polarity = value;
+  }
+}
+
+function normalizeOptionalBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "true") return true;
+  if (normalized === "false") return false;
+  return null;
+}
+
+function normalizeSensitivity(value) {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().toLowerCase();
+  if (["sensitive", "private", "confidential"].includes(normalized)) return "sensitive";
+  if (normalized === "normal") return "normal";
+  return null;
+}
+
+function normalizeSafetyLevel(value) {
+  return ["normal", "urgent", "crisis", "scam", "verify", "support"].includes(value) ? value : "normal";
 }
 
 function memoryKey(item = {}) {

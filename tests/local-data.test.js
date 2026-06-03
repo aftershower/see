@@ -75,26 +75,28 @@ test("normalizes stored memory items for saved local records", () => {
   const memories = normalizeMemoryItems([
     { id: "blank-label", type: "person", label: "   ", detail: "ignore" },
     { id: "blank-type", type: "   ", label: "小玲", detail: "ignore" },
-    { id: "trimmed", type: " person ", label: " 小玲 ", detail: "女儿" },
+    { id: " trimmed ", type: " person ", label: " 小玲 ", detail: " 女儿 ", confidence: 0.8, sensitivity: "private", doNotMention: "true", rawTranscript: "should not persist" },
     { id: "bad", type: "person", detail: "missing label" }
   ], { createId: (prefix) => `${prefix}-fallback` });
 
   assert.deepEqual(memories, [
-    { id: "trimmed", type: "person", label: "小玲", detail: "女儿" }
+    { id: "trimmed", type: "person", label: "小玲", detail: "女儿", confidence: 0.8, sensitivity: "sensitive", doNotMention: true }
   ]);
 });
 
 test("normalizes stored message items for saved local records", () => {
   const messages = normalizeMessageItems([
-    { id: "m1", role: "assistant", text: " 你好 ", createdAt: "2026-06-02T10:00:00.000Z" },
+    { id: " m1 ", role: "assistant", text: " 你好 ", createdAt: "2026-06-02T10:00:00.000Z" },
     { id: "bad-role", role: "system", text: "ignore" },
     { id: "bad-text", role: "user", text: 123 },
     { id: "blank-text", role: "user", text: "   " },
+    { id: "   ", role: "assistant", text: "明天见", safetyLevel: "bad class" },
     { role: "user", text: "今天想聊天" }
   ], { createId: (prefix) => `${prefix}-fallback`, now: () => "2026-06-02T12:00:00.000Z" });
 
   assert.deepEqual(messages, [
     { id: "m1", role: "assistant", text: "你好", safetyLevel: "normal", createdAt: "2026-06-02T10:00:00.000Z" },
+    { id: "assistant-fallback", role: "assistant", text: "明天见", safetyLevel: "normal", createdAt: "2026-06-02T12:00:00.000Z" },
     { id: "user-fallback", role: "user", text: "今天想聊天", safetyLevel: "normal", createdAt: "2026-06-02T12:00:00.000Z" }
   ]);
 });
