@@ -115,6 +115,7 @@ test("optimization notes track automatic raw chat retention cap", async () => {
   assert.match(notes, /writes pruned legacy records back/i);
   assert.match(notes, /legacy localStorage message items/i);
   assert.match(notes, /legacy localStorage memory items/i);
+  assert.match(notes, /legacy localStorage check-in prompts/i);
   assert.match(notes, /Web Storage API/i);
   assert.match(notes, /OWASP HTML5 Security Cheat Sheet/i);
 });

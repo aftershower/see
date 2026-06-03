@@ -7,6 +7,7 @@ import {
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeCheckIn,
   normalizeMessageItems,
   normalizeMemoryItems,
   normalizeImportedState
@@ -62,6 +63,7 @@ function loadState() {
     const storedMemoriesAreArray = Array.isArray(parsed.memories);
     const originalMemories = storedMemoriesAreArray ? parsed.memories : [];
     const memories = normalizeMemoryItems(originalMemories, { createId });
+    const checkIn = normalizeCheckIn(parsed.checkIn);
     if (
       !storedMessagesAreArray
       || messages.length === 0
@@ -69,6 +71,7 @@ function loadState() {
       || JSON.stringify(messages) !== JSON.stringify(storedMessages)
       || !storedMemoriesAreArray
       || JSON.stringify(memories) !== JSON.stringify(originalMemories)
+      || JSON.stringify(checkIn) !== JSON.stringify(parsed.checkIn || null)
     ) {
       shouldPersistLoadedState = true;
     }
@@ -76,7 +79,7 @@ function loadState() {
       messages: retained,
       memories,
       deletedMemoryKeys: normalizeDeletedMemoryKeys(parsed.deletedMemoryKeys),
-      checkIn: parsed.checkIn || null
+      checkIn
     };
   } catch {
     return defaultState();

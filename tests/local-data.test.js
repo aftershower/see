@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   mergeLocalDataStates,
   needsImportConflictConfirmation,
+  normalizeCheckIn,
   normalizeMessageItems,
   normalizeMemoryItems,
   normalizeImportedState
@@ -18,7 +19,7 @@ test("normalizes imported local data while rejecting invalid exports", () => {
       { id: "person-xiaoling", type: "person", label: "小玲", detail: "女儿" },
       { type: "broken", detail: "missing label" }
     ],
-    checkIn: { text: "晚上好", slot: "evening" },
+    checkIn: { text: " 晚上好 ", slot: " evening ", hidden: "raw" },
     deletedMemoryKeys: ["person:小玲", 123, ""]
   }, { createId: (prefix) => `${prefix}-fallback`, now: () => "2026-06-02T12:00:00.000Z" });
 
@@ -26,11 +27,31 @@ test("normalizes imported local data while rejecting invalid exports", () => {
   assert.equal(normalized.messages[0].role, "assistant");
   assert.equal(normalized.memories.length, 1);
   assert.equal(normalized.memories[0].label, "小玲");
-  assert.equal(normalized.checkIn.text, "晚上好");
+  assert.deepEqual(normalized.checkIn, { text: "晚上好", slot: "evening" });
   assert.deepEqual(normalized.deletedMemoryKeys, ["person:小玲"]);
 
   assert.throws(() => normalizeImportedState({ messages: [], memories: [] }), /no messages/i);
   assert.throws(() => normalizeImportedState({ messages: [{ role: "assistant", text: "hi" }] }), /invalid/i);
+});
+
+test("normalizes stored check-in prompts for saved local records", () => {
+  assert.deepEqual(normalizeCheckIn({
+    id: " check-1 ",
+    slot: " quiet ",
+    text: " 今天安静了挺久。 ",
+    reason: " quiet_period ",
+    createdAt: " 2026-06-02T20:00:00.000Z ",
+    rawMemoryDetail: "should not persist"
+  }), {
+    id: "check-1",
+    slot: "quiet",
+    text: "今天安静了挺久。",
+    reason: "quiet_period",
+    createdAt: "2026-06-02T20:00:00.000Z"
+  });
+
+  assert.equal(normalizeCheckIn({ text: "   ", slot: "evening" }), null);
+  assert.equal(normalizeCheckIn({ text: 123, slot: "evening" }), null);
 });
 
 test("normalizes imported memories by trimming labels and dropping blank records", () => {

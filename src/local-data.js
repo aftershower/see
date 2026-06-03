@@ -15,7 +15,7 @@ export function normalizeImportedState(imported, options = {}) {
   return {
     messages,
     memories: normalizeMemoryItems(imported.memories, { createId }),
-    checkIn: imported.checkIn && typeof imported.checkIn.text === "string" ? imported.checkIn : null,
+    checkIn: normalizeCheckIn(imported.checkIn),
     deletedMemoryKeys: normalizeDeletedMemoryKeys(imported.deletedMemoryKeys)
   };
 }
@@ -55,6 +55,19 @@ export function normalizeMemoryItems(memories = [], options = {}) {
     .filter((item) => item.type && item.label);
 }
 
+export function normalizeCheckIn(checkIn) {
+  if (!checkIn || typeof checkIn.text !== "string") return null;
+  const text = checkIn.text.trim();
+  if (!text) return null;
+  const normalized = { text };
+  for (const field of ["id", "slot", "reason", "createdAt"]) {
+    if (typeof checkIn[field] !== "string") continue;
+    const value = checkIn[field].trim();
+    if (value) normalized[field] = value;
+  }
+  return normalized;
+}
+
 export function needsImportConflictConfirmation(currentState, imported) {
   const currentLatest = latestTimestamp(currentState?.messages || []);
   const importedLatest = timestamp(imported?.exportedAt) || latestTimestamp(imported?.messages || []);
@@ -73,7 +86,7 @@ export function mergeLocalDataStates(currentState = {}, importedState = {}) {
   return {
     messages: mergeMessages(currentState.messages || [], importedState.messages || []),
     memories: mergeMemoryItems(currentMemories, importedMemories),
-    checkIn: currentState.checkIn || importedState.checkIn || null,
+    checkIn: normalizeCheckIn(currentState.checkIn) || normalizeCheckIn(importedState.checkIn),
     deletedMemoryKeys
   };
 }
