@@ -121,3 +121,11 @@ test("optimization notes track scam false-positive tuning", async () => {
   assert.match(notes, /shopping false positive/i);
   assert.match(notes, /routine government or benefits-office visits/i);
 });
+
+test("optimization notes track high-risk safety phrase expansion", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /self-harm method/i);
+  assert.match(notes, /too many pills/i);
+  assert.match(notes, /caregiver.*medicine/i);
+});

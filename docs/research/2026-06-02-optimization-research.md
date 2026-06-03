@@ -69,6 +69,7 @@ For a future native iOS version, the most coherent sync story is CloudKit privat
 - An automatic raw chat retention cap keeps only the most recent 12 messages while long-term memory remains separate, including loaded legacy localStorage records.
 - The browser now initializes the retention limit before loading saved state and writes pruned legacy records back on open, so old localStorage chat history is not silently restored or left untrimmed at rest.
 - Scam false-positive tuning now avoids a shopping false positive from bare `pin` matching and avoids flagging routine government or benefits-office visits without payment/code pressure.
+- Safety routing now catches additional high-risk phrases: explicit self-harm method language, English "too many pills" overdose wording, and caregiver statements about withholding medicine.
 
 ## Next Optimization Backlog
 

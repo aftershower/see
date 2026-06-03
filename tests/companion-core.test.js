@@ -35,7 +35,10 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("I fell and cannot get up").level, "urgent");
   assert.deepEqual(classifySafety("我不想活了，觉得没人需要我").level, "crisis");
   assert.deepEqual(classifySafety("我想死，死了算了").level, "crisis");
+  assert.deepEqual(classifySafety("我想从楼上跳下去").level, "crisis");
   assert.deepEqual(classifySafety("I want to die. There is no reason to live.").level, "crisis");
+  assert.deepEqual(classifySafety("I do not want to wake up anymore.").level, "crisis");
+  assert.deepEqual(classifySafety("I want to jump off the balcony.").level, "crisis");
   assert.deepEqual(classifySafety("陌生人让我买礼品卡，还要银行卡验证码").level, "scam");
   assert.deepEqual(classifySafety("有人说自己是社保局，让我买 Apple 礼品卡，把 PIN 发过去").level, "scam");
   assert.deepEqual(classifySafety("有人让我把手机收到的六位数告诉他").level, "scam");
@@ -48,7 +51,9 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
+  assert.deepEqual(classifySafety("I took too many pills and feel strange.").level, "urgent");
   assert.deepEqual(classifySafety("护工打我，还不让我告诉女儿").level, "urgent");
+  assert.deepEqual(classifySafety("My caregiver won't give me my medicine.").level, "urgent");
   assert.deepEqual(classifySafety("儿子拿走我的身份证，不让我出门").level, "urgent");
   assert.deepEqual(classifySafety("儿子威胁我，不准我告诉别人").level, "urgent");
   assert.deepEqual(classifySafety("我迷路了，不知道家在哪").level, "urgent");
@@ -64,6 +69,7 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("I went shopping with my daughter.").level, "normal");
   assert.deepEqual(classifySafety("我今天去政府大厅办事。").level, "normal");
   assert.deepEqual(classifySafety("我去社保局问养老金。").level, "normal");
+  assert.deepEqual(classifySafety("I watched kids jump off the dock into the lake.").level, "normal");
 });
 
 test("plans check-ins using day rhythm and memories", () => {
