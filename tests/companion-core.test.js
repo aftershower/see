@@ -114,6 +114,9 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("I logged in to ssa.gov to check my benefits.").level, "normal");
   assert.deepEqual(classifySafety("I paid my electric bill online using the website printed on my paper bill.").level, "normal");
   assert.deepEqual(classifySafety("The water company mailed me a notice about a payment plan.").level, "normal");
+  assert.deepEqual(classifySafety("银行 app 提醒我注意资金安全。").level, "normal");
+  assert.deepEqual(classifySafety("银行 app 提醒我今天的转账限额。").level, "normal");
+  assert.deepEqual(classifySafety("我下载了银行 app 查看账单。").level, "normal");
   assert.deepEqual(classifySafety("The store gave me a refund for a broken toaster.").level, "normal");
   assert.deepEqual(classifySafety("I read an article about bitcoin today.").level, "normal");
   assert.deepEqual(classifySafety("My grandson showed me how QR codes work at the museum.").level, "normal");
