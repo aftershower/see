@@ -67,6 +67,8 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("A stranger asked me to buy gift cards and send the card numbers.").level, "scam");
   assert.deepEqual(classifySafety("Someone on the phone asked me to read them my verification code.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把验证码告诉他。").level, "scam");
+  assert.deepEqual(classifySafety("Someone asked me to send money and keep it secret.").level, "scam");
+  assert.deepEqual(classifySafety("有人自称客服让我屏幕共享查看银行卡。").level, "scam");
   assert.deepEqual(classifySafety("我不知道这个电话可不可信").level, "verify");
   assert.deepEqual(classifySafety("我好像吃错药了，头晕得厉害").level, "urgent");
   assert.deepEqual(classifySafety("我吃了太多降压药，现在很难受").level, "urgent");
@@ -120,6 +122,10 @@ test("classifies urgent medical, crisis, scam, verify, support, and normal messa
   assert.deepEqual(classifySafety("我给房东转账交了房租。").level, "normal");
   assert.deepEqual(classifySafety("我下载了天气 app。").level, "normal");
   assert.deepEqual(classifySafety("我给孙女买了一张生日礼品卡。").level, "normal");
+  assert.deepEqual(classifySafety("我给孙女准备生日惊喜，先别告诉家人。").level, "normal");
+  assert.deepEqual(classifySafety("我签了保密协议，不能聊公司项目。").level, "normal");
+  assert.deepEqual(classifySafety("女儿教我在视频里共享屏幕看照片。").level, "normal");
+  assert.deepEqual(classifySafety("新闻里说最近骗子很多，我提醒邻居小心。").level, "normal");
   assert.deepEqual(classifySafety("A stranger asked me for my PIN.").level, "scam");
   assert.deepEqual(classifySafety("陌生人让我把银行密码告诉他。").level, "scam");
 });

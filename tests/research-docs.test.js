@@ -230,6 +230,16 @@ test("optimization notes track everyday payment false-positive tuning", async ()
   assert.match(notes, /FTC/i);
 });
 
+test("optimization notes track everyday secrecy false-positive tuning", async () => {
+  const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
+
+  assert.match(notes, /birthday surprise/i);
+  assert.match(notes, /confidentiality agreement/i);
+  assert.match(notes, /screen sharing lesson/i);
+  assert.match(notes, /news mention of scammers/i);
+  assert.match(notes, /FTC/i);
+});
+
 test("optimization notes track high-risk safety phrase expansion", async () => {
   const notes = await readFile(new URL("../docs/research/2026-06-02-optimization-research.md", import.meta.url), "utf8");
 
